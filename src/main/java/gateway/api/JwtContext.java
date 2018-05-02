@@ -45,6 +45,7 @@ public class JwtContext {
 		this.tokenLiveSconds = tokenLiveSconds;
 	}
 
+	@SuppressWarnings("deprecation")
 	public JwtToken createJwtToken() {
 		Algorithm jwt_algorithm;
 		jwt_algorithm = Algorithm.RSA256(jwtRsaKey);
