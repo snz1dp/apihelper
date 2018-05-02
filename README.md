@@ -42,14 +42,14 @@
 <dependency>
   <groupId>api.gateway</groupId>
   <artifactId>apihelper</artifactId>
-  <version>1.3.0</version>
+  <version>1.3.2</version>
   <type>pom</type>
 </dependency>
 ```
 
 #### 2、直接引用
 
-下载[apihelper-1.3.0-all.jar](https://api.hngytobacco.com/nexus/service/local/repo_groups/public/content/api/gateway/apihelper/1.3.0/apihelper-1.3.0-all.jar
+下载[apihelper-1.3.0-all.jar](https://api.hngytobacco.com/nexus/service/local/repo_groups/public/content/api/gateway/apihelper/1.3.2/apihelper-1.3.2-all.jar
 )文件并放到classpath中。
 
 ### 二、基本功能
