@@ -6,7 +6,7 @@ package gateway.api;
  *
  * @param <T>
  */
-public class Return<T extends Object> extends Result {
+public class Return<T> extends Result {
 
 	private static final long serialVersionUID = -6422710904853351605L;
 	
