@@ -175,9 +175,9 @@
 
 	<repositories>
 		<repository>
-			<id>nexus</id>
-			<name>Nexus</name>
-			<url>https://api.hngytobacco.com/nexus/content/groups/public/</url>
+			<id>snz1</id>
+			<name>snz1</name>
+			<url>https://snz1.cn/maven/repository/maven-public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -199,9 +199,9 @@
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>nexus</id>
-			<name>Nexus</name>
-			<url>https://api.hngytobacco.com/nexus/content/groups/public/</url>
+			<id>snz1</id>
+			<name>snz1</name>
+			<url>https://snz1.cn/maven/repository/maven-public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -221,15 +221,14 @@
       </snapshots>
     </pluginRepository>		
 	</pluginRepositories>
-
 	<distributionManagement>
 		<repository>
-			<id>nexus-releases</id>
-			<url>https://api.hngytobacco.com/nexus/content/repositories/releases</url>
+			<id>snz1-releases</id>
+      <url>https://snz1.cn/maven/repository/maven-releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>nexus-snapshots</id>
-			<url>https://api.hngytobacco.com/nexus/content/repositories/snapshots</url>
+			<id>snz1-snapshots</id>
+			<url>https://snz1.cn/maven/repository/maven-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>	
 </project>
