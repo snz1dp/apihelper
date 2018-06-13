@@ -48,4 +48,12 @@ public class Return<T> extends Result {
 		return wval;
 	}
 	
+	public static <T> Return<T> error(int code, String msg, T obj) {
+		Return<T> wval = new Return<T>();
+		wval.code = code;
+		wval.message = msg;
+		wval.data = obj;
+		return wval;
+	}
+	
 }
