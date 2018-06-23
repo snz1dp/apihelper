@@ -12,6 +12,9 @@ public class Return<T> extends Result {
 		
 	public T data;
 	
+	@SuppressWarnings("rawtypes")
+	private static final Return success = new Return();
+	
 	@Override
 	public String toString() {
 		return JsonUtils.toJson(this);
@@ -23,9 +26,9 @@ public class Return<T> extends Result {
 		return wval;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static <T> Return<T> success() {
-		Return<T> wval = new Return<T>();
-		return wval;
+		return success;
 	}
 	
 	public static <T> Return<T> success(String msg) {
