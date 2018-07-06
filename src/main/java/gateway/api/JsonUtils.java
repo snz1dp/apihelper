@@ -2,6 +2,7 @@ package gateway.api;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -26,11 +27,24 @@ public abstract class JsonUtils {
 		return getGson().fromJson(json, toClass);
 	}
 	
+	public static <T> T fromJson(String json, Type toClass) {
+		return getGson().fromJson(json, toClass);
+	}
+	
 	public static <T> T fromJson(InputStream reader, Class<T> toClass) {
+		return getGson().fromJson(new InputStreamReader(reader), toClass);
+	}
+	
+	public static <T> T fromJson(InputStream reader, Type toClass) {
 		return getGson().fromJson(new InputStreamReader(reader), toClass);
 	}
 	
 	public static <T> T fromJson(JsonElement el, Class<T> toClass) {
 		return getGson().fromJson(el, toClass);
 	}
+	
+	public static <T> T fromJson(JsonElement el, Type type) {
+		return getGson().fromJson(el, type);
+	}
+	
 }
