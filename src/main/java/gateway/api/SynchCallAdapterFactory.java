@@ -64,11 +64,13 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 			try {
 				Response<Object> resp = call.execute();
 				EnvelopeReturn ersp = (EnvelopeReturn)resp.body();
-				if (!(resp.code() == 200 || resp.code() == 201) || ersp.code != 0) {
+				if (!(resp.code() == 200 || resp.code() == 201) || ersp == null || ersp.code != 0) {
 					throw new NotExceptException(
-							ersp.code, 
-							ersp.message, ersp.timestamp, 
-							ersp.exception, ersp.path);
+							ersp == null ? resp.code() : ersp.code, 
+							ersp == null ? resp.message() : ersp.message, 
+							ersp == null ? new Date() : ersp.timestamp, 
+							ersp == null ? null : ersp.exception, 
+							ersp == null ? null : ersp.path);
 				}
 				if (ersp.data == null) return ersp.data;
 				
