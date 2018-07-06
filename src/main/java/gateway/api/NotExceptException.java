@@ -1,5 +1,7 @@
 package gateway.api;
 
+import java.util.Date;
+
 public class NotExceptException extends RuntimeException {
 	
 	public static final int CLIENT_START_ERROR = 5000;
@@ -7,6 +9,12 @@ public class NotExceptException extends RuntimeException {
 	private static final long serialVersionUID = -1823306261700764444L;
 	
 	private int code;
+	
+	public Date timestamp;
+	
+	public String exception;
+	
+	public String path;
 
 	public NotExceptException() {
 		super("执行出错！");
@@ -23,6 +31,14 @@ public class NotExceptException extends RuntimeException {
 		this.code = code;
 	}
 	
+	public NotExceptException(int code, String message, Date timestamp, String exception, String path) {
+		super(message);
+		this.code = code;
+		this.timestamp = timestamp == null ? new Date() : timestamp;
+		this.exception = exception;
+		this.path = path;
+	}
+	
 	public NotExceptException(int code, String message, Throwable e) {
 		super(message, e);
 		this.code = code;
@@ -30,6 +46,18 @@ public class NotExceptException extends RuntimeException {
 	
 	public int getCode() {
 		return code;
+	}
+	
+	public Date getTimestamp() {
+		return timestamp;
+	}
+	
+	public String getErrorType() {
+		return exception;
+	}
+	
+	public String getApiURI() {
+		return path;
 	}
 	
 	@Override
