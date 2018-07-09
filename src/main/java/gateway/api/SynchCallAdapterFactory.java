@@ -78,7 +78,6 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 					return JsonUtils.fromJson(ersp.data, TypeToken.getArray(TypeUtils.getArrayComponentType(responseType)).getType());
 				} else if (responseType instanceof ParameterizedType) {
 					Type rawType = TypeUtils.getRawType(responseType, null);
-					if (!ersp.data.isJsonArray()) return null;
 					Object val = JsonUtils.fromJson(ersp.data, 
 							TypeToken.getParameterized(rawType, new ArrayList<Type>(
 									TypeUtils.getTypeArguments((ParameterizedType)responseType
