@@ -12,7 +12,7 @@ public abstract class JsonUtils {
 
 	private static Gson gson = new GsonBuilder()
 			.enableComplexMapKeySerialization()
-			.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+			.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
       .create();
 	
 	public static Gson getGson() {

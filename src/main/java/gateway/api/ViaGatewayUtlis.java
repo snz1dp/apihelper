@@ -2,9 +2,14 @@ package gateway.api;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -105,7 +110,9 @@ public abstract class ViaGatewayUtlis {
 	 * @return
 	 */
 	public static String getGatewayProto(HttpServletRequest request) {
-		return request.getHeader("x-forwarded-proto");
+		if (isRequestViaGateway(request))
+			return request.getHeader("x-forwarded-proto");
+		return request.getProtocol();
 	}
 	
 	/**
@@ -121,7 +128,9 @@ public abstract class ViaGatewayUtlis {
 	 * @return
 	 */
 	public static String getRequestURIViaGateway(HttpServletRequest request) {
-		return request.getHeader("x-source-uri");
+		if (isRequestViaGateway(request))
+			return request.getHeader("x-source-uri");
+		return request.getRequestURI();
 	}
 	
 	/**
@@ -162,7 +171,9 @@ public abstract class ViaGatewayUtlis {
 	 * @return
 	 */
 	public static int getGatewayPort(HttpServletRequest request) {
-		return Integer.parseInt(request.getHeader("x-forwarded-port"));
+		if (isRequestViaGateway(request))
+			return Integer.parseInt(request.getHeader("x-forwarded-port"));
+		return request.getServerPort();
 	}
 	
 	/**
@@ -540,5 +551,22 @@ public abstract class ViaGatewayUtlis {
 			return getReqeustRoot(request) + "/" + target_url;
 		}
 	}
+	
+	public static Map<String, Object> requestParametersToMap(HttpServletRequest request) {
+		return requestParametersToMap(request, null);
+	}
+
+	public static Map<String, Object> requestParametersToMap(HttpServletRequest request, Set<String> exclude_names) {
+		Map<String, Object> ext_properties = new LinkedHashMap<String, Object>();
+		Enumeration<String> req_names = request.getParameterNames();
+		while(req_names.hasMoreElements()) {
+			String req_name = req_names.nextElement();
+			if (exclude_names != null && exclude_names.contains(req_name)) continue;
+			ext_properties.put(req_name, request.getParameter(req_name));
+		}
+		if (ext_properties.size() == 0) return null;
+		return new HashMap<String, Object>(ext_properties);
+	}
+
 	
 }
