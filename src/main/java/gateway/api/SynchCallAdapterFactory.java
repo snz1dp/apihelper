@@ -65,6 +65,9 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 				Response<Object> resp = call.execute();
 				EnvelopeReturn ersp = (EnvelopeReturn)resp.body();
 				if (!(resp.code() == 200 || resp.code() == 201) || ersp == null || ersp.code != 0) {
+					if (resp.code() == 404 || ersp != null && ersp.code == 404) {
+						throw new NotFoundException(ersp == null ? resp.message() : ersp.message);
+					}
 					throw new NotExceptException(
 							ersp == null ? resp.code() : ersp.code, 
 							ersp == null ? resp.message() : ersp.message, 
@@ -131,10 +134,12 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 					return resp.body(); 
 				} else if (responseType == Void.class) {
 					if (!(resp.code() == 200 || resp.code() == 201)) {
+						if (resp.code() == 404) throw new NotFoundException(resp.message());
 						return new NotExceptException(resp.code(), resp.message());
 					}
 					return null;
 				} else if (!(resp.code() == 200 || resp.code() == 201)) {
+					if (resp.code() == 404) throw new NotFoundException(resp.message());
 					throw new NotExceptException(resp.code(), resp.message());
 				}
 				return resp.body();
