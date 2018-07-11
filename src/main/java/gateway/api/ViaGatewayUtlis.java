@@ -334,6 +334,22 @@ public abstract class ViaGatewayUtlis {
 		http_msg.addHeader("x-app-sticky", getTraceChainIdViaGateway());
 	}
 	
+	public static void initRequestChainForHttpClient(HttpMessage http_msg) {
+		if (isRequestViaWeb()) {
+			firstRequestChainForHttpClient(http_msg);
+		} else {
+			copyRequestChainForHttpClient(http_msg);
+		}
+	}
+	
+	public static void initRequestChainForHttpClient(okhttp3.Request.Builder http_msg) {
+		if (isRequestViaWeb()) {
+			firstRequestChainForHttpClient(http_msg);
+		} else {
+			copyRequestChainForHttpClient(http_msg);
+		}
+	}
+	
 	public static void copyRequestChainForHttpClient(okhttp3.Request.Builder http_msg) {
 		if (!isRequestViaGateway()) return;
 		http_msg.addHeader("x-trace-parent", getRequestIdViaGateway());
