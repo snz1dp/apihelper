@@ -37,21 +37,31 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 			}
 		}
 		
+		boolean is_page_resp = false; 
+		for (Annotation ann : annotations) {
+			if (ann != null && ann instanceof OnlyhPageList) {
+				is_page_resp = true;
+				break;
+			}
+		}
+		
 		if (is_envelope_resp) {
 			if (returnType instanceof Result) throw new IllegalStateException("Return type error when use @EnvelopeResponse!");
-			return new EnvelopeCallAdapter(returnType);
+			return new EnvelopeCallAdapter(returnType, is_page_resp);
 		}
 				
-		return is_envelope_resp ? null : 
-			new ObjectCallAdapter(returnType); 
+		return new ObjectCallAdapter(returnType, is_page_resp); 
 	}
 	
 	private static class EnvelopeCallAdapter implements CallAdapter<Object, Object> {
 		
 		private Type responseType;
 		
-		public EnvelopeCallAdapter(Type responseType) {
+		private boolean is_page_resp = false;
+		
+		public EnvelopeCallAdapter(Type responseType, boolean is_page_resp) {
 			this.responseType = responseType;
+			this.is_page_resp = is_page_resp; 
 		}
 		
 		@Override
@@ -59,6 +69,7 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 			return EnvelopeReturn.class;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public Object adapt(Call<Object> call) {
 			try {
@@ -85,6 +96,9 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 							TypeToken.getParameterized(rawType, new ArrayList<Type>(
 									TypeUtils.getTypeArguments((ParameterizedType)responseType
 											).values()).toArray(new Type[0])).getType());
+					if (val instanceof Page && is_page_resp)  {
+						val = ((Page<Object>)(val)).data;
+					}
 					return val;
 				} else if (responseType instanceof Class) {
 					return JsonUtils.fromJson(ersp.data, TypeToken.get((Class<?>)responseType).getType());
@@ -117,8 +131,11 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 		
 		private Type responseType;
 		
-		public ObjectCallAdapter(Type responseType) {
+		private boolean is_page_list = false;
+		
+		public ObjectCallAdapter(Type responseType, boolean is_page_list) {
 			this.responseType = responseType;
+			this.is_page_list = is_page_list;
 		}
 		
 		@Override
@@ -126,6 +143,7 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 			return responseType;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public Object adapt(Call<Object> call) {
 			try {
@@ -142,7 +160,11 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 					if (resp.code() == 404) throw new NotFoundException(resp.message());
 					throw new NotExceptException(resp.code(), resp.message());
 				}
-				return resp.body();
+				Object val = resp.body();
+				if (val instanceof Page && is_page_list) {
+					val = ((Page<Object>)val).data;
+				}
+				return val;
 			} catch (IOException e) {
 				if (responseType instanceof Result) {
 					return new Result(NotExceptException.CLIENT_START_ERROR, e.getMessage()); 
