@@ -29,7 +29,10 @@ public abstract class ViaGatewayUtlis {
 	 * @return
 	 */
 	public static String getClientRealIp() {
-		HttpServletRequest request = getHttpServletRequest();
+		return getClientRealIp(getHttpServletRequest());
+	}
+	
+	public static String getClientRealIp(HttpServletRequest request) {
 		if (request == null) return null;
 		
 		// 获得真实IP
@@ -49,7 +52,7 @@ public abstract class ViaGatewayUtlis {
 			}
 		}
 		return StringUtils.split(realIp, ",")[0];
-	}
+	}	
 	
 	/**
 	 * 获取用户浏览器UserAgent
