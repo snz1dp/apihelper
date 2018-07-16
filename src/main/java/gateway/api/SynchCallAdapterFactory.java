@@ -62,6 +62,10 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 		public EnvelopeCallAdapter(Type responseType, boolean is_page_resp) {
 			this.responseType = responseType;
 			this.is_page_resp = is_page_resp; 
+			if (this.is_page_resp && responseType instanceof ParameterizedType) {
+				this.responseType = TypeUtils.parameterize(Page.class, 
+						TypeUtils.getTypeArguments((ParameterizedType) responseType).entrySet().iterator().next().getValue());
+			}
 		}
 		
 		@Override
