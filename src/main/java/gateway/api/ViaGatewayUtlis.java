@@ -498,6 +498,7 @@ public abstract class ViaGatewayUtlis {
 	 * 获得ACL分组代码
 	 * @return
 	 */
+	@Deprecated
 	public static String[] getRequestAclGroups() {
 		return getRequestAclGroups(getHttpServletRequest());
 	}
@@ -507,6 +508,7 @@ public abstract class ViaGatewayUtlis {
 	 * 获得ACL分组代码
 	 * @return
 	 */
+	@Deprecated
 	public static String[] getRequestAclGroups(HttpServletRequest request) {
 		if (request == null) return new String[0];
 		String groups = request.getHeader("x-app-groups");
