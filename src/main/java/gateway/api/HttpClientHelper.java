@@ -191,13 +191,24 @@ public abstract class HttpClientHelper {
 	//执行并返回对象
 	public static <T> T requestExecuteAsObject(HttpUriRequest request, HttpContext context, Class<T> clazz) throws Exception {
 		request.setHeader(HttpHeaders.ACCEPT, "application/json");
-		return requestExecute(request, context, createHttpResponseObjectExtractor(clazz));
+		return requestExecute(request, context, createHttpResponseObjectExtractor(clazz, false));
 	}
 	
 	public static <T> T requestExecuteAsObject(HttpUriRequest request, Class<T> clazz) throws Exception {
 		request.setHeader(HttpHeaders.ACCEPT, "application/json");
-		return requestExecute(request, HttpClientContext.create(), createHttpResponseObjectExtractor(clazz));
+		return requestExecute(request, HttpClientContext.create(), createHttpResponseObjectExtractor(clazz, false));
 	}
+	
+	public static <T> T requestExecuteAsObject(HttpUriRequest request, HttpContext context, Class<T> clazz, boolean evelope_response) throws Exception {
+		request.setHeader(HttpHeaders.ACCEPT, "application/json");
+		return requestExecute(request, context, createHttpResponseObjectExtractor(clazz, evelope_response));
+	}
+	
+	public static <T> T requestExecuteAsObject(HttpUriRequest request, Class<T> clazz, boolean evelope_response) throws Exception {
+		request.setHeader(HttpHeaders.ACCEPT, "application/json");
+		return requestExecute(request, HttpClientContext.create(), createHttpResponseObjectExtractor(clazz, evelope_response));
+	}
+	
 	
 	// 使用缺省的HttpClient执行请求并提取应答内容
 	public static <T> T requestExecute(HttpUriRequest request, HttpResponseExtractor<T> response_extracter) throws Exception {
@@ -754,7 +765,7 @@ public abstract class HttpClientHelper {
 		@Override
 		public String extract(HttpResponse response) throws Exception {
 			int status_code = response.getStatusLine().getStatusCode();
-			if (status_code != 200) {
+			if (status_code != 200 && status_code != 201) {
 				throw new Exception(MessageFormat.format("服务端应答错误(CODE={0}: {1}",
 						status_code,
 						EntityUtils.toString(response.getEntity(), charset)));
@@ -773,7 +784,7 @@ public abstract class HttpClientHelper {
 		@Override
 		public byte[] extract(HttpResponse response) throws Exception {
 			int status_code = response.getStatusLine().getStatusCode();
-			if (status_code != 200) {
+			if (status_code != 200 && status_code != 201) {
 				throw new Exception(MessageFormat.format("服务端应答错误(CODE={0}: {1}",
 						status_code,
 						EntityUtils.toString(response.getEntity(), HttpResponseDefaultCharset)));
@@ -792,7 +803,7 @@ public abstract class HttpClientHelper {
 		@Override
 		public Void extract(HttpResponse response) throws Exception {
 			int status_code = response.getStatusLine().getStatusCode();
-			if (status_code != 200) {
+			if (status_code != 200 && status_code != 201) {
 				throw new Exception(MessageFormat.format("服务端应答错误: {1}",
 						status_code,
 						EntityUtils.toString(response.getEntity(), HttpResponseDefaultCharset)));
@@ -810,42 +821,31 @@ public abstract class HttpClientHelper {
 
 		@Override
 		public JsonObject extract(HttpResponse response) throws Exception {
-			int status_code = response.getStatusLine().getStatusCode();
-			if (status_code != 200) {
-				try {
-					return JsonUtils.fromJson(response.getEntity().getContent(), JsonObject.class);
-				} catch(Throwable e) {
-					throw new Exception(MessageFormat.format("格式化JSON出错(0): {1}",
-							status_code,
-							e.getMessage()));
-				}
-			}
 			return JsonUtils.fromJson(response.getEntity().getContent(), JsonObject.class);
 		}
 		
 	}
 	
-	public static <T> HttpResponseObjectExtractor<T> createHttpResponseObjectExtractor(Class<T> clazz) {
-		return new HttpResponseObjectExtractor<T>(clazz);
+	public static <T> HttpResponseObjectExtractor<T> createHttpResponseObjectExtractor(Class<T> clazz, boolean evelope_response) {
+		return new HttpResponseObjectExtractor<T>(clazz, evelope_response);
 	}
 	
 	public static class HttpResponseObjectExtractor<T> implements HttpResponseExtractor<T> {
 		
 		private Class<T> object_clazz;
 		
-		public HttpResponseObjectExtractor(Class<T> clazz) {
+		private boolean evelope_response;
+		
+		public HttpResponseObjectExtractor(Class<T> clazz, boolean evelope_response) {
 			this.object_clazz = clazz;
+			this.evelope_response = evelope_response;
 		}
 
 		@Override
 		public T extract(HttpResponse response) throws Exception {
-			int status_code = response.getStatusLine().getStatusCode();
-			if (status_code != 200) {
-				try {
-					return JsonUtils.fromJson(response.getEntity().getContent(), object_clazz);
-				} catch(Throwable e) {
-					throw new Exception(MessageFormat.format("格式化对象错误(0)：{1}", status_code, e.getMessage()));
-				}
+			if (evelope_response) {
+				JsonObject json_node = JsonUtils.fromJson(response.getEntity().getContent(), JsonObject.class);
+				return JsonUtils.fromJson(json_node.get("data"), object_clazz);
 			}
 			return JsonUtils.fromJson(response.getEntity().getContent(), object_clazz);
 		}
