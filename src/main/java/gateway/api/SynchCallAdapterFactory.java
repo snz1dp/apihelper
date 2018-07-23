@@ -83,6 +83,9 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 					if (resp.code() == 404 || ersp != null && ersp.code == 404) {
 						throw new NotFoundException(ersp == null ? resp.message() : ersp.message);
 					}
+					if (ersp == null) {
+						ersp = JsonUtils.fromJson(resp.errorBody().byteStream(), EnvelopeReturn.class);
+					}
 					throw new NotExceptException(
 							ersp == null ? resp.code() : ersp.code, 
 							ersp == null ? resp.message() : ersp.message, 
