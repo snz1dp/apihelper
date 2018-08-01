@@ -9,13 +9,7 @@ public class OkHttpClientInterceptor implements Interceptor {
 	
 	protected okhttp3.Request.Builder newRequestBuilder(Chain chain) {
 		okhttp3.Request.Builder new_req_builder = chain.request().newBuilder();
-		if (ViaGatewayUtlis.isRequestViaWeb()) {
-			if (ViaGatewayUtlis.isAppRequestViaGateway()) {
-				ViaGatewayUtlis.copyRequestChainForHttpClient(new_req_builder);
-			} else {
-				ViaGatewayUtlis.firstRequestChainForHttpClient(new_req_builder);
-			}
-		}
+		ViaGatewayUtils.initRequestChainForHttpClient(new_req_builder);
 		return new_req_builder;
 	}
 
