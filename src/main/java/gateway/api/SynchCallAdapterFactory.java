@@ -42,6 +42,9 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 			if (ann != null && ann instanceof OnlyhPageList) {
 				is_page_resp = true;
 				break;
+			} else if (ann != null && ann instanceof OnePageOnly) {
+				is_page_resp = true;
+				break;
 			}
 		}
 		
