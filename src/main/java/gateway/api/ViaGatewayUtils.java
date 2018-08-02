@@ -120,7 +120,7 @@ public abstract class ViaGatewayUtils {
 	public static String getGatewayProto(HttpServletRequest request) {
 		if (isRequestViaGateway(request))
 			return request.getHeader("x-forwarded-proto");
-		return request.getProtocol();
+		return request.getScheme();
 	}
 	
 	/**
@@ -531,7 +531,7 @@ public abstract class ViaGatewayUtils {
 	 * @return
 	 */
 	public static String getReqeustRoot(HttpServletRequest request) {
-		String proto = request.getProtocol();
+		String proto = request.getScheme();
 		StringBuffer sbf = new StringBuffer(getGatewayProto(request));
 		sbf.append("://").append(request.getServerName());
 		int port = request.getServerPort();
@@ -568,7 +568,7 @@ public abstract class ViaGatewayUtils {
 			return getRequestRootViaGateway(request) + "/" + target_url;
 		} else {
 			if (target_url.startsWith("//")) {
-				return request.getProtocol() + ":" + target_url;
+				return request.getScheme() + ":" + target_url;
 			} else if (target_url.startsWith("https://") || target_url.startsWith("http://")) {
 				return target_url;
 			} else if (target_url.startsWith("/")) {
