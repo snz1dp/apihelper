@@ -8,9 +8,9 @@ public class Page<T> implements Serializable {
 
 	private static final long serialVersionUID = -1670466635388646632L;
 
-	public int total;
+	public long total;
 	
-	public int offset;
+	public long offset;
 	
 	public List<T> data;
 	
