@@ -93,7 +93,7 @@ public abstract class ViaGatewayUtils {
 	
 	public static String getRequestRootViaGateway(HttpServletRequest request) {
 		String proto = getGatewayProto(request);
-		StringBuffer sbf = new StringBuffer(getGatewayProto(request));
+		StringBuffer sbf = new StringBuffer(proto);
 		sbf.append("://").append(getGatewayHost(request));
 		int port = getGatewayPort(request);
 		if (StringUtils.equalsIgnoreCase(proto, "http") &&  port != 80 || 
@@ -155,7 +155,7 @@ public abstract class ViaGatewayUtils {
 	 */
 	public static String getRequestURLViaGateway(HttpServletRequest request) {
 		String proto = getGatewayProto(request);
-		StringBuffer sbf = new StringBuffer(getGatewayProto(request));
+		StringBuffer sbf = new StringBuffer(proto);
 		sbf.append("://").append(getGatewayHost(request));
 		int port = getGatewayPort(request);
 		if (StringUtils.equalsIgnoreCase(proto, "http") &&  port != 80 || 
@@ -532,7 +532,7 @@ public abstract class ViaGatewayUtils {
 	 */
 	public static String getReqeustRoot(HttpServletRequest request) {
 		String proto = request.getScheme();
-		StringBuffer sbf = new StringBuffer(getGatewayProto(request));
+		StringBuffer sbf = new StringBuffer(proto);
 		sbf.append("://").append(request.getServerName());
 		int port = request.getServerPort();
 		if (StringUtils.equalsIgnoreCase(proto, "http") &&  port != 80 || 
