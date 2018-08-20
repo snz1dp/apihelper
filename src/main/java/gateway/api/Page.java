@@ -21,7 +21,7 @@ public class Page<T> implements Serializable {
 		this.data = Collections.EMPTY_LIST;
 	}
 
-	public Page(List<T> data, int offset, int total) {
+	public Page(List<T> data, long offset, long total) {
 		this.data = data;
 		this.offset = offset;
 		this.total = total;
