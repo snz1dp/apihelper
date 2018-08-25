@@ -17,7 +17,7 @@ public abstract class RetrofitUtils {
 	 * @return {@link Retrofit}
 	 */
 	public static Retrofit createRetrofit(String apiprefix) {
-		return createRetrofit(null, null, null);
+		return createRetrofit(apiprefix, null, null);
 	}
 	
 	/**
@@ -69,6 +69,7 @@ public abstract class RetrofitUtils {
 			client_builder.addInterceptor(new OkHttpClientJwtInterceptor(jwt_context));
 		return new Retrofit.Builder().baseUrl(admin_url)
 				.addCallAdapterFactory(SynchCallAdapterFactory.create())
+				.addConverterFactory(BytesConverterFactory.create())
 				.addConverterFactory(GsonConverterFactory.create(
 						JsonUtils.getGson())).client(client_builder.build()).build();
 	}

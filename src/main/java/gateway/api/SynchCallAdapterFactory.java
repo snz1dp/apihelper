@@ -52,7 +52,7 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 			if (returnType instanceof Result) throw new IllegalStateException("Return type error when use @EnvelopeResponse!");
 			return new EnvelopeCallAdapter(returnType, is_page_resp);
 		}
-				
+		
 		return new ObjectCallAdapter(returnType, is_page_resp); 
 	}
 	

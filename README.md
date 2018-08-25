@@ -10,9 +10,9 @@
 ```
   <repositories>
     <repository>
-      <id>nexus</id>
-      <name>Nexus</name>
-      <url>https://api.hngytobacco.com/nexus/content/groups/public/</url>
+      <id>snz1</id>
+      <name>snz1</name>
+      <url>https://snz1.cn/maven/repository/maven-public/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -20,17 +20,39 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>central</id>
+      <name>central</name>
+      <url>http://uk.maven.org/maven2/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <id>nexus</id>
-      <name>Nexus</name>
-      <url>https://api.hngytobacco.com/nexus/content/groups/public/</url>
+      <id>snz1</id>
+      <name>snz1</name>
+      <url>https://snz1.cn/maven/repository/maven-public/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
       <snapshots>
         <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>mvnrepository</id>
+      <name>mvnrepository</name>
+      <url>http://uk.maven.org/maven2/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
@@ -42,15 +64,14 @@
 <dependency>
   <groupId>api.gateway</groupId>
   <artifactId>apihelper</artifactId>
-  <version>1.3.2</version>
+  <version>1.3.4-SNAPSHOT</version>
   <type>pom</type>
 </dependency>
 ```
 
 #### 2、直接引用
 
-下载[apihelper-1.3.0-all.jar](https://api.hngytobacco.com/nexus/service/local/repo_groups/public/content/api/gateway/apihelper/1.3.2/apihelper-1.3.2-all.jar
-)文件并放到classpath中。
+下载[apihelper-1.3.4-SNAPSHOT-all.jar](https://snz1.cn/maven/repository/maven-snapshots/api/gateway/apihelper/1.3.4-SNAPSHOT/apihelper-1.3.4-20180820.094935-14-all.jar)文件并放到classpath中。
 
 ### 二、基本功能
 
