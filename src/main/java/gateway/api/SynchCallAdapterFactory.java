@@ -163,7 +163,7 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 				} else if (responseType == Void.class) {
 					if (!(resp.code() == 200 || resp.code() == 201)) {
 						if (resp.code() == 404) throw new NotFoundException(resp.message());
-						return new NotExceptException(resp.code(), resp.message());
+						throw new NotExceptException(resp.code(), resp.message());
 					}
 					return null;
 				} else if (!(resp.code() == 200 || resp.code() == 201)) {
