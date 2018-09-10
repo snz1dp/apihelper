@@ -2,7 +2,7 @@ package gateway.api;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.sql.Date;
+import java.util.Date;
 import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang3.reflect.TypeUtils;
@@ -60,7 +60,7 @@ public class GsonConverterFactory  extends Converter.Factory {
 
 	@Override
 	public Converter<?, String> stringConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-		if (TypeUtils.isAssignable(Date.class, type)) {
+		if (TypeUtils.isAssignable(type, Date.class)) {
 			return this.dateToStringConverter;
 		} else { 
 			return super.stringConverter(type, annotations, retrofit);
