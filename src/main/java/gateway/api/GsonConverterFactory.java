@@ -60,7 +60,7 @@ public class GsonConverterFactory  extends Converter.Factory {
 
 	@Override
 	public Converter<?, String> stringConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-		if (TypeUtils.isAssignable(type, Date.class)) {
+		if (TypeUtils.isAssignable(Date.class, type)) {
 			return this.dateToStringConverter;
 		} else { 
 			return super.stringConverter(type, annotations, retrofit);
