@@ -9,10 +9,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 
 public abstract class JsonUtils {
+	
+	public static final String JsonDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
 	private static Gson gson = new GsonBuilder()
 			.enableComplexMapKeySerialization()
-			.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
+			.setDateFormat(JsonDateFormat)
       .create();
 	
 	public static Gson getGson() {

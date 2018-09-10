@@ -1,12 +1,14 @@
 package gateway.api;
 
 import java.security.interfaces.RSAKey;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.gson.Gson;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public abstract class RetrofitUtils {
 
@@ -50,6 +52,31 @@ public abstract class RetrofitUtils {
 			String jwtAppToken,
 			String jwtPrivateKey,
 			int jwtTokenLiveSeconds) {
+		return createRetrofit(apiprefix, jwtAppToken, jwtPrivateKey, jwtTokenLiveSeconds, 
+				JsonUtils.getGson(), JsonUtils.JsonDateFormat, 10, TimeUnit.SECONDS);
+	}
+	
+	/**
+	 * 创建Retrofit对象并返回
+	 * @param apiprefix
+	 * @param jwtAppToken
+	 * @param jwtPrivateKey
+	 * @param jwtTokenLiveSeconds
+	 * @param gson
+	 * @param json_date_format
+	 * @param timeout
+	 * @param time_unit
+	 * @return
+	 */
+	public static Retrofit createRetrofit(
+			String apiprefix,
+			String jwtAppToken,
+			String jwtPrivateKey,
+			int jwtTokenLiveSeconds,
+			Gson gson,
+			String json_date_format,
+			long timeout, 
+			TimeUnit time_unit) {
 		JwtContext jwt_context = null;
 		if (StringUtils.isNoneBlank(jwtAppToken) &&
 				StringUtils.isNoneBlank(jwtPrivateKey)) {
@@ -67,11 +94,14 @@ public abstract class RetrofitUtils {
 		OkHttpClient.Builder client_builder = new OkHttpClient.Builder();
 		if (jwt_context != null)
 			client_builder.addInterceptor(new OkHttpClientJwtInterceptor(jwt_context));
+		
+		client_builder.connectTimeout(timeout, time_unit);
+		
 		return new Retrofit.Builder().baseUrl(admin_url)
 				.addCallAdapterFactory(SynchCallAdapterFactory.create())
 				.addConverterFactory(BytesConverterFactory.create())
-				.addConverterFactory(GsonConverterFactory.create(
-						JsonUtils.getGson())).client(client_builder.build()).build();
+				.addConverterFactory(GsonConverterFactory.create(gson, json_date_format))
+				.client(client_builder.build()).build();
 	}
 		
 	
