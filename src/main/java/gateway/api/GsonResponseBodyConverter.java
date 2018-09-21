@@ -9,6 +9,12 @@ import java.io.IOException;
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 
+/**
+ * GSON应答体转换器
+ * @author neeker
+ *
+ * @param <T>
+ */
 final class GsonResponseBodyConverter<T> implements Converter<ResponseBody, T> {
 	private final Gson gson;
 	private final TypeAdapter<T> adapter;

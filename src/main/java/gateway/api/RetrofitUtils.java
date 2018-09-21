@@ -10,6 +10,11 @@ import com.google.gson.Gson;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 
+/**
+ * Retrofit工具类
+ * @author neeker
+ *
+ */
 public abstract class RetrofitUtils {
 
 	private static final org.apache.commons.logging.Log Log = org.apache.commons.logging.LogFactory.getLog(RetrofitUtils.class);

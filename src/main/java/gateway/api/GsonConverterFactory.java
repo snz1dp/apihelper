@@ -16,6 +16,11 @@ import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 
+/**
+ * JSON应答转换工厂
+ * @author neeker
+ *
+ */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class GsonConverterFactory  extends Converter.Factory {
   /**

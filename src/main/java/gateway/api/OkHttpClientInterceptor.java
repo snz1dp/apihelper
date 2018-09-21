@@ -5,6 +5,11 @@ import java.io.IOException;
 import okhttp3.Interceptor;
 import okhttp3.Response;
 
+/**
+ * OkHttp请求拦截器
+ * @author neeker
+ *
+ */
 public class OkHttpClientInterceptor implements Interceptor {
 	
 	protected okhttp3.Request.Builder newRequestBuilder(Chain chain) {

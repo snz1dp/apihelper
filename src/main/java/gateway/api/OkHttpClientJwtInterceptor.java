@@ -3,6 +3,11 @@ package gateway.api;
 import okhttp3.Interceptor;
 import okhttp3.Request.Builder;
 
+/**
+ * OkHttp客户JWT拦截器
+ * @author neeker
+ *
+ */
 public class OkHttpClientJwtInterceptor extends OkHttpClientInterceptor implements Interceptor {
 	
 	private JwtContext jwtContext;

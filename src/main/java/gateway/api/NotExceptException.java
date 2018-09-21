@@ -2,6 +2,11 @@ package gateway.api;
 
 import java.util.Date;
 
+/**
+ * 非预期异常
+ * @author neeker
+ *
+ */
 public class NotExceptException extends RuntimeException {
 	
 	public static final int CLIENT_START_ERROR = 5000;
@@ -44,18 +49,34 @@ public class NotExceptException extends RuntimeException {
 		this.code = code;
 	}
 	
+	/**
+	 * 获得错误代码
+	 * @return
+	 */
 	public int getCode() {
 		return code;
 	}
 	
+	/**
+	 * 获得异常时间
+	 * @return
+	 */
 	public Date getTimestamp() {
 		return timestamp;
 	}
 	
+	/**
+	 * 获取错误类型
+	 * @return
+	 */
 	public String getErrorType() {
 		return exception;
 	}
 	
+	/**
+	 * 请求错误URI
+	 * @return
+	 */
 	public String getApiURI() {
 		return path;
 	}

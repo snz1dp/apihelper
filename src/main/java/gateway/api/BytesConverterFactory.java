@@ -12,6 +12,11 @@ import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 
+/**
+ * 二进制返回转换工厂
+ * @author neeker
+ *
+ */
 public class BytesConverterFactory extends Converter.Factory {
 
 	private static final MediaType MEDIA_TYPE = MediaType.parse("application/octet-stream");

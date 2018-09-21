@@ -1,7 +1,7 @@
 package gateway.api;
 
 /**
- * API分装返回值
+ * 封装返回
  * @author neeker
  *
  * @param <T>

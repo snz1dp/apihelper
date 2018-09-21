@@ -3,7 +3,7 @@ package gateway.api;
 import java.io.Serializable;
 
 /**
- * api简单返回值
+ * 简单返回
  * @author neeker
  */
 public class Result implements Serializable {

@@ -17,6 +17,11 @@ import retrofit2.Call;
 import retrofit2.CallAdapter;
 import retrofit2.Retrofit;
 
+/**
+ * 同步okHttp请求适配工厂类
+ * @author neeker
+ *
+ */
 public class SynchCallAdapterFactory extends CallAdapter.Factory {
 
 	public static CallAdapter.Factory create() {

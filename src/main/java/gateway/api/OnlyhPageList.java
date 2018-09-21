@@ -6,7 +6,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-//应答由信封方式封装的列表数据
+/**
+ * 应答由信封方式封装的列表数据
+ * 
+ * @author neeker
+ *
+ */
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

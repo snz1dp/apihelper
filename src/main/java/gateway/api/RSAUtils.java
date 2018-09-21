@@ -33,6 +33,11 @@ import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.util.io.pem.PemWriter;
 
+/**
+ * RSA工具类
+ * @author neeker
+ *
+ */
 public abstract class RSAUtils {
 
 	public static final String RSA_DEFAULT_TRANSFORMATION = "RSA/ECB/PKCS1Padding";

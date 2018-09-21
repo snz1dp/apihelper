@@ -20,6 +20,11 @@ import org.apache.http.HttpMessage;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+/**
+ * 通过网关的工具类
+ * @author neeker
+ *
+ */
 public abstract class ViaGatewayUtils {
 	
 	private static final Log Log = LogFactory.getLog(ViaGatewayUtils.class);

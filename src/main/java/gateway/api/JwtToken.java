@@ -3,7 +3,11 @@ package gateway.api;
 import java.io.Serializable;
 import java.util.Date;
 
-//JWT安全令牌
+/**
+ * JWT安全令牌
+ * @author neeker
+ *
+ */
 public class JwtToken implements Serializable {
 
 	private static final long serialVersionUID = 2545258825711201640L;
@@ -21,32 +25,50 @@ public class JwtToken implements Serializable {
 		this.expireTime = expireTime;
 	}
 
-	//是否已过期
+	/**
+	 * 是否已过期
+	 * @return
+	 */
 	boolean isExpired() {
 		return !expireTime.after(new Date());
 	}
 
-	//获得JWT令牌
+	/**
+	 * 获得JWT令牌
+	 * @return
+	 */
 	public String getJwtToken() {
 		return jwtToken;
 	}
 	
-	//获得查询参数的字符串
+	/**
+	 * 获得查询参数的字符串
+	 * @return
+	 */
 	public String toParameterString() {
 		return "jwt=" + getJwtToken();
 	}
 	
-	//获得认证头字符串
+	/**
+	 * 获得认证头字符串
+	 * @return
+	 */
 	public String toAuthorizationString() {
 		return "Bearer " + getJwtToken();
 	}
 
-	//创建时间
+	/**
+	 * 创建时间
+	 * @return
+	 */
 	public Date getCreateTime() {
 		return createTime;
 	}
 
-	//超时时间
+	/**
+	 * 超时时间
+	 * @return
+	 */
 	public Date getExpireTime() {
 		return expireTime;
 	}
