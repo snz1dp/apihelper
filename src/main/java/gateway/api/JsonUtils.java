@@ -15,19 +15,39 @@ import com.google.gson.JsonElement;
  */
 public abstract class JsonUtils {
 	
-	public static final String JsonDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+	public static final String JsonDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
+	@Deprecated
+	private static final JsonDateTypeAdapter DefaultJsonDateTypeAdapter = new JsonDateTypeAdapter(JsonDateFormat);
+
+	@Deprecated
 	private static Gson gson = new GsonBuilder()
 			.enableComplexMapKeySerialization()
 			.setDateFormat(JsonDateFormat)
+			.registerTypeAdapter(java.util.Date.class, DefaultJsonDateTypeAdapter)
+			.registerTypeAdapter(java.sql.Date.class, DefaultJsonDateTypeAdapter)
       .create();
 	
 	/**
 	 * 获取全局GSON对象
 	 * @return
 	 */
+	@Deprecated
 	public static Gson getGson() {
 		return gson;
+	}
+	
+	/**
+	 * 新建一个GSON对象
+	 * @return
+	 */
+	public static Gson newGson() {
+		return new GsonBuilder()
+			.enableComplexMapKeySerialization()
+			.setDateFormat(JsonDateFormat)
+			.registerTypeAdapter(java.util.Date.class, new JsonDateTypeAdapter(JsonDateFormat))
+			.registerTypeAdapter(java.sql.Date.class, new JsonDateTypeAdapter(JsonDateFormat))
+	    .create();
 	}
 	
 	/**
@@ -36,7 +56,7 @@ public abstract class JsonUtils {
 	 * @return
 	 */
 	public static <T> String toJson(T object) {
-		return getGson().toJson(object);
+		return newGson().toJson(object);
 	}
 	
 	/**
@@ -46,27 +66,27 @@ public abstract class JsonUtils {
 	 * @return
 	 */
 	public static <T> T fromJson(String json, Class<T> toClass) {
-		return getGson().fromJson(json, toClass);
+		return newGson().fromJson(json, toClass);
 	}
 	
 	public static <T> T fromJson(String json, Type toClass) {
-		return getGson().fromJson(json, toClass);
+		return newGson().fromJson(json, toClass);
 	}
 	
 	public static <T> T fromJson(InputStream reader, Class<T> toClass) {
-		return getGson().fromJson(new InputStreamReader(reader), toClass);
+		return newGson().fromJson(new InputStreamReader(reader), toClass);
 	}
 	
 	public static <T> T fromJson(InputStream reader, Type toClass) {
-		return getGson().fromJson(new InputStreamReader(reader), toClass);
+		return newGson().fromJson(new InputStreamReader(reader), toClass);
 	}
 	
 	public static <T> T fromJson(JsonElement el, Class<T> toClass) {
-		return getGson().fromJson(el, toClass);
+		return newGson().fromJson(el, toClass);
 	}
 	
 	public static <T> T fromJson(JsonElement el, Type type) {
-		return getGson().fromJson(el, type);
+		return newGson().fromJson(el, type);
 	}
 	
 }
