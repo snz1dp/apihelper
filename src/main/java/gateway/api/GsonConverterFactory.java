@@ -28,7 +28,7 @@ public class GsonConverterFactory  extends Converter.Factory {
    * decoding from JSON (when no charset is specified by a header) will use UTF-8.
    */
   public static GsonConverterFactory create() {
-    return create(JsonUtils.getGson(), JsonUtils.JsonDateFormat);
+    return create(JsonUtils.newGson(), JsonUtils.JsonDateFormat);
   }
 
   /**

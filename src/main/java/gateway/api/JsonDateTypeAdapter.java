@@ -23,6 +23,12 @@ import com.google.gson.internal.bind.util.ISO8601Utils;
 public class JsonDateTypeAdapter implements JsonSerializer<Date>, JsonDeserializer<Date> {
 
   private final DateFormat localFormat;
+  
+  private final DateFormat fixedFormat1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+  private final DateFormat fixedFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+  private final DateFormat fixedFormat3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+  private final DateFormat fixedFormat4 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+  private final DateFormat fixedFormat5 = new SimpleDateFormat("yyyy-MM-dd");
 
   public JsonDateTypeAdapter(String datePattern) {
     this(new SimpleDateFormat(datePattern));
@@ -65,6 +71,21 @@ public class JsonDateTypeAdapter implements JsonSerializer<Date>, JsonDeserializ
     synchronized (localFormat) {
       try {
       	return localFormat.parse(json.getAsString());
+      } catch (ParseException ignored) {}
+      try {
+      	return fixedFormat1.parse(json.getAsString());
+      } catch (ParseException ignored) {}
+      try {
+      	return fixedFormat2.parse(json.getAsString());
+      } catch (ParseException ignored) {}
+      try {
+      	return fixedFormat3.parse(json.getAsString());
+      } catch (ParseException ignored) {}
+      try {
+      	return fixedFormat4.parse(json.getAsString());
+      } catch (ParseException ignored) {}
+      try {
+      	return fixedFormat5.parse(json.getAsString());
       } catch (ParseException ignored) {}
       try {
         return ISO8601Utils.parse(json.getAsString(), new ParsePosition(0));
