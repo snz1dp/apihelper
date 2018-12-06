@@ -101,6 +101,8 @@ public abstract class RetrofitUtils {
 			client_builder.addInterceptor(new OkHttpClientJwtInterceptor(jwt_context));
 		
 		client_builder.connectTimeout(timeout, time_unit);
+		client_builder.readTimeout(timeout, time_unit);
+		client_builder.writeTimeout(timeout, time_unit);
 		
 		return new Retrofit.Builder().baseUrl(admin_url)
 				.addCallAdapterFactory(SynchCallAdapterFactory.create())
