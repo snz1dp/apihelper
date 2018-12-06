@@ -58,7 +58,7 @@ public abstract class RetrofitUtils {
 			String jwtPrivateKey,
 			int jwtTokenLiveSeconds) {
 		return createRetrofit(apiprefix, jwtAppToken, jwtPrivateKey, jwtTokenLiveSeconds, 
-				JsonUtils.newGson(), JsonUtils.JsonDateFormat, 10, TimeUnit.SECONDS);
+				JsonUtils.newGson(), JsonUtils.JsonDateFormat, 180, TimeUnit.SECONDS);
 	}
 	
 	/**
