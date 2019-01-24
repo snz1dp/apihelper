@@ -1,12 +1,14 @@
 package gateway.api;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 
 import com.google.gson.JsonElement;
@@ -91,8 +93,18 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 					if (resp.code() == 404 || ersp != null && ersp.code == 404) {
 						throw new NotFoundException(ersp == null ? resp.message() : ersp.message);
 					}
+					StringWriter sbw = new StringWriter();
+					IOUtils.copy(resp.errorBody().byteStream(), sbw, JsonUtils.JsonCharset);
 					if (ersp == null) {
-						ersp = JsonUtils.fromJson(resp.errorBody().byteStream(), EnvelopeReturn.class);
+						try {
+							ersp = JsonUtils.fromJson(sbw.toString(), EnvelopeReturn.class);
+						} catch (Throwable e) {
+							ersp = new EnvelopeReturn();
+							ersp.code = resp.code();
+							ersp.message = sbw.toString();
+							ersp.timestamp = new Date();
+							ersp.exception = e.getClass().getName();
+						}
 					}
 					throw new NotExceptException(
 							ersp == null ? resp.code() : ersp.code, 

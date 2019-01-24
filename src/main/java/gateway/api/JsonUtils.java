@@ -3,6 +3,7 @@ package gateway.api;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,6 +20,8 @@ public abstract class JsonUtils {
 
 	@Deprecated
 	private static final JsonDateTypeAdapter DefaultJsonDateTypeAdapter = new JsonDateTypeAdapter(JsonDateFormat);
+	
+	public static final Charset JsonCharset = Charset.forName("UTF-8");
 
 	@Deprecated
 	private static Gson gson = new GsonBuilder()
