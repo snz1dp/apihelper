@@ -115,11 +115,6 @@
         <artifactId>httpclient</artifactId>
         <version>${httpclient.version}</version>
     </dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>${gson.version}</version>
-		</dependency>
 
 		<!-- Bouncy Castle -->
 		<dependency>
@@ -139,7 +134,19 @@
 		    <groupId>com.squareup.retrofit2</groupId>
 		    <artifactId>converter-gson</artifactId>
 		    <version>${retrofit.version}</version>
+		    <exclusions>
+		      <exclusion>
+			      <groupId>com.google.code.gson</groupId>
+	          <artifactId>gson</artifactId>
+          </exclusion>
+		    </exclusions>
 		</dependency>		
+		
+		<dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>${gson.version}</version>
+    </dependency>
 		
 	</dependencies>
 	<build>
