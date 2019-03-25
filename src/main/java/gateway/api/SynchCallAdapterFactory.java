@@ -89,7 +89,7 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 			try {
 				Response<Object> resp = call.execute();
 				EnvelopeReturn ersp = (EnvelopeReturn)resp.body();
-				if (!(resp.code() >= 200 && resp.code() < 300) || ersp == null || ersp.code != 0) {
+				if (!(resp.code() >= 200 && resp.code() < 400) || ersp == null || ersp.code != 0) {
 					if (resp.code() == 404 || ersp != null && ersp.code == 404) {
 						throw new NotFoundException(ersp == null ? resp.message() : ersp.message);
 					}
@@ -113,7 +113,7 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 							ersp == null ? null : ersp.exception, 
 							ersp == null ? null : ersp.path);
 				}
-				if (ersp.data == null) return ersp.data;
+				if (ersp.data == null) return null;
 				
 				if (TypeUtils.isArrayType(responseType)) {
 					return JsonUtils.fromJson(ersp.data, TypeToken.getArray(TypeUtils.getArrayComponentType(responseType)).getType());
@@ -178,12 +178,12 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 				if (responseType instanceof Result) {
 					return resp.body(); 
 				} else if (responseType == Void.class) {
-					if (!(resp.code() >= 200 && resp.code() < 300)) {
+					if (!(resp.code() >= 200 && resp.code() < 400)) {
 						if (resp.code() == 404) throw new NotFoundException(resp.message());
 						throw new NotExceptException(resp.code(), resp.message());
 					}
 					return null;
-				} else if (!(resp.code() >= 200 && resp.code() < 300)) {
+				} else if (!(resp.code() >= 200 && resp.code() < 400)) {
 					if (resp.code() == 404) throw new NotFoundException(resp.message());
 					throw new NotExceptException(resp.code(), resp.message());
 				}

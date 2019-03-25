@@ -4,14 +4,23 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.TypeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HeaderElement;
@@ -23,12 +32,12 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NoHttpResponseException;
+import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -52,6 +61,7 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.Args;
 import org.apache.http.util.EntityUtils;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * 优化HttpClient请求帮助类<br/>
@@ -726,6 +736,10 @@ public abstract class HttpClientHelper {
 		T extract(HttpResponse response) throws Exception;
 
 	}
+	
+	// 应答缺省字符集
+	public static final Charset HttpResponseDefaultCharset = Charset.forName("UTF-8");
+	
 
 	// 默认字符串提取
 	public static final HttpResponseStringExtractor RESPONSE_STRING_EXTRACTOR = new HttpResponseStringExtractor();
@@ -738,9 +752,6 @@ public abstract class HttpClientHelper {
 	
 	// 默认GSON提取对象
 	public static final HttpResponseGsonExtractor RESPONSE_GSON_EXTRACTOR = new HttpResponseGsonExtractor();
-	
-	// 应答缺省字符集
-	public static final Charset HttpResponseDefaultCharset = Charset.forName("UTF-8");
 	
 	// 根据字符集获取字符提取器
 	public static HttpResponseStringExtractor getHttpResponseStringExtractorByCharset(Charset charset) {
@@ -760,17 +771,17 @@ public abstract class HttpClientHelper {
 			this.charset = charset;
 		}
 
-		private HttpResponseStringExtractor() {};
+		private HttpResponseStringExtractor() {}
 
 		@Override
 		public String extract(HttpResponse response) throws Exception {
-			int status_code = response.getStatusLine().getStatusCode();
-			if (status_code != 200 && status_code != 201) {
-				throw new Exception(MessageFormat.format("服务端应答错误(CODE={0}: {1}",
-						status_code,
-						EntityUtils.toString(response.getEntity(), charset)));
+			StatusLine state = response.getStatusLine();
+			if (!(state.getStatusCode() >= 200 && state.getStatusCode() < 400)) {
+				throw new Exception(MessageFormat.format("服务端应答错误(CODE={0}: {1}", state.getStatusCode(), 
+						EntityUtils.toString(response.getEntity(), HttpResponseDefaultCharset)));
 			}
-			return EntityUtils.toString(response.getEntity(), charset);
+
+			return EntityUtils.toString(response.getEntity(), getResponseContentCharset(response, charset));
 		}
 
 	}
@@ -783,15 +794,35 @@ public abstract class HttpClientHelper {
 
 		@Override
 		public byte[] extract(HttpResponse response) throws Exception {
-			int status_code = response.getStatusLine().getStatusCode();
-			if (status_code != 200 && status_code != 201) {
-				throw new Exception(MessageFormat.format("服务端应答错误(CODE={0}: {1}",
-						status_code,
+			StatusLine state = response.getStatusLine();
+			if (!(state.getStatusCode() >= 200 && state.getStatusCode() < 400)) {
+				throw new Exception(MessageFormat.format("服务端应答错误(CODE={0}: {1}", state.getStatusCode(), 
 						EntityUtils.toString(response.getEntity(), HttpResponseDefaultCharset)));
 			}
 			return EntityUtils.toByteArray(response.getEntity());
 		}
 
+	}
+	
+	//获取应答字符集对象（默认为UTF-8）
+	public static Charset getResponseContentCharset(HttpResponse response) {
+		return getResponseContentCharset(response, HttpResponseDefaultCharset);
+	}
+	
+	//获取应答字符集对象
+	public static Charset getResponseContentCharset(HttpResponse response, Charset default_charset) {
+		if (response.getEntity().getContentEncoding() == null ||
+				StringUtils.isBlank(response.getEntity().getContentEncoding().getValue())) {
+			return default_charset == null ? Charset.forName("UTF-8") : default_charset;
+		}
+		try {
+			return Charset.forName(response.getEntity().getContentEncoding().getValue());
+		} catch(Throwable e) {
+			if (Log.isDebugEnabled()) {
+				Log.debug(e.getMessage(), e);
+			}
+			return default_charset == null ? Charset.forName("UTF-8") : default_charset;
+		}
 	}
 	
 	//空返回
@@ -802,11 +833,11 @@ public abstract class HttpClientHelper {
 
 		@Override
 		public Void extract(HttpResponse response) throws Exception {
-			int status_code = response.getStatusLine().getStatusCode();
-			if (status_code != 200 && status_code != 201) {
-				throw new Exception(MessageFormat.format("服务端应答错误: {1}",
-						status_code,
-						EntityUtils.toString(response.getEntity(), HttpResponseDefaultCharset)));
+			StatusLine state = response.getStatusLine();
+			if (!(state.getStatusCode() >= 200 && state.getStatusCode() < 400)) {
+				throw new NotExceptException(state.getStatusCode(), 
+						MessageFormat.format("服务端应答错误: {1}", state.getStatusCode(), 
+								EntityUtils.toString(response.getEntity(), getResponseContentCharset(response))));
 			}
 			return null;
 		}
@@ -821,6 +852,12 @@ public abstract class HttpClientHelper {
 
 		@Override
 		public JsonObject extract(HttpResponse response) throws Exception {
+			StatusLine state = response.getStatusLine();
+			if (!(state.getStatusCode() >= 200 && state.getStatusCode() < 400)) {
+				throw new NotExceptException(state.getStatusCode(), 
+						MessageFormat.format("服务端应答错误: {1}", state.getStatusCode(), 
+								EntityUtils.toString(response.getEntity(), getResponseContentCharset(response))));
+			}
 			return JsonUtils.fromJson(response.getEntity().getContent(), JsonObject.class);
 		}
 		
@@ -832,34 +869,68 @@ public abstract class HttpClientHelper {
 	
 	public static class HttpResponseObjectExtractor<T> implements HttpResponseExtractor<T> {
 		
-		private Class<T> object_clazz;
+		private Type object_clazz;
 		
 		private boolean evelope_response;
 		
-		public HttpResponseObjectExtractor(Class<T> clazz, boolean evelope_response) {
+		public HttpResponseObjectExtractor(Type clazz, boolean evelope_response) {
 			this.object_clazz = clazz;
 			this.evelope_response = evelope_response;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public T extract(HttpResponse response) throws Exception {
+			StatusLine state = response.getStatusLine();
 			if (evelope_response) {
-				JsonObject json_node = JsonUtils.fromJson(response.getEntity().getContent(), JsonObject.class);
-				return JsonUtils.fromJson(json_node.get("data"), object_clazz);
+				JsonObject json_node = null;
+				String json_error = null;
+				try {
+					json_node = JsonUtils.fromJson(response.getEntity().getContent(), JsonObject.class);
+				} catch(Throwable e) {
+					json_error = e.getMessage();
+				}
+
+				if (!(state.getStatusCode() >= 200 && state.getStatusCode() < 400) || 
+						json_node == null || json_node.get("code") == null || json_node.get("code").getAsInt() != 0) {
+					if (state.getStatusCode() == 404 || json_node != null && json_node.get("code") != null && json_node.get("code").getAsInt() == 404) {
+						throw new NotFoundException(json_node.get("message") != null ? json_node.get("message").getAsString() : json_error);
+					} else 
+						throw new NotExceptException(
+							json_node == null || json_node.get("code") == null ? state.getStatusCode() : json_node.get("code").getAsInt(), 
+									json_node == null || json_node.get("message") == null ? json_error : json_node.get("message").getAsString(), 
+											json_node == null || json_node.get("timestamp") == null ? new Date() : new SimpleDateFormat(JsonUtils.JsonDateFormat).parse(json_node.get("timestamp").getAsString()), 
+													json_node == null || json_node.get("exception") == null ? null : json_node.get("exception").getAsString(), 
+															json_node == null || json_node.get("path") == null ? null : json_node.get("path").getAsString());
+				}
+				
+				if (!json_node.has("data")) return null;
+				
+				if (Objects.equals(object_clazz, Void.class)) return null;
+				
+				if (TypeUtils.isArrayType(object_clazz)) {
+					return JsonUtils.fromJson(json_node.get("data"), TypeToken.getArray(TypeUtils.getArrayComponentType(object_clazz)).getType());
+				} else if (object_clazz instanceof ParameterizedType) {
+					Type rawType = TypeUtils.getRawType(object_clazz, null);
+					Object val = JsonUtils.fromJson(json_node.get("data"), 
+							TypeToken.getParameterized(rawType, new ArrayList<Type>(
+									TypeUtils.getTypeArguments((ParameterizedType)object_clazz).values()).toArray(new Type[0])).getType());
+					return (T) val;
+				} else if (object_clazz instanceof Class) {
+					return JsonUtils.fromJson(json_node.get("data"), TypeToken.get((Class<?>)object_clazz).getType());
+				}
+				return JsonUtils.fromJson(json_node.get("data"), TypeToken.get(object_clazz).getType());
+				
+			} else {
+				if (!(state.getStatusCode() >= 200 && state.getStatusCode() < 400))
+					throw new NotExceptException(state.getStatusCode(), 
+							IOUtils.toString(response.getEntity().getContent(), 
+									getResponseContentCharset(response)));
+				return JsonUtils.fromJson(response.getEntity().getContent(), TypeToken.get(object_clazz).getType());
 			}
-			return JsonUtils.fromJson(response.getEntity().getContent(), object_clazz);
 		}
 		
 	}
 
-	public static void main(String[] args) {
-		try {
-			Log.info(HttpClientHelper.requestExecute(new HttpGet("http://www.baidu.com"), HttpClientHelper.RESPONSE_STRING_EXTRACTOR));
-		} catch (Exception e) {
-			Log.error("请求出错: " + e.getMessage(), e);
-		} finally {
-			HttpClientHelper.destorySingletonHttpClientObjects();
-		}
-	}
 
 }
