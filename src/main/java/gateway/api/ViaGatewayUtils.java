@@ -184,8 +184,15 @@ public abstract class ViaGatewayUtils {
 	 * @return
 	 */
 	public static int getGatewayPort(HttpServletRequest request) {
-		if (isRequestViaGateway(request))
-			return Integer.parseInt(request.getHeader("x-forwarded-port"));
+		if (isRequestViaGateway(request)) {
+			String port_val = request.getHeader("x-forwarded-port");
+			if (StringUtils.isEmpty(port_val)) return request.getServerPort();
+			try {
+				return Integer.parseInt(port_val);
+			} catch(Throwable e) {
+				request.getServerPort();
+			}
+		}
 		return request.getServerPort();
 	}
 	
@@ -395,10 +402,13 @@ public abstract class ViaGatewayUtils {
 	}
 	
 	public static String getGatewayHost(HttpServletRequest request) {
-		if (request == null) return null;
-		String hostname = request.getHeader("x-host-override");
-		if (StringUtils.isNoneBlank(hostname)) return hostname;
-		return request.getHeader("x-forwarded-host");
+		if (isRequestViaGateway(request)) {
+			String hostname = request.getHeader("x-host-override");
+			if (StringUtils.isNotEmpty(hostname)) return hostname;
+			hostname = request.getHeader("x-forwarded-host");
+			if (StringUtils.isNotEmpty(hostname)) return hostname;
+		}
+		return request.getServerName();
 	}
 	
 	/**
