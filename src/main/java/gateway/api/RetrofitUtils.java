@@ -1,6 +1,8 @@
 package gateway.api;
 
+import java.lang.reflect.Method;
 import java.security.interfaces.RSAKey;
+import java.text.MessageFormat;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +21,44 @@ public abstract class RetrofitUtils {
 
 	private static final org.apache.commons.logging.Log Log = org.apache.commons.logging.LogFactory.getLog(RetrofitUtils.class);
 
+	private static Method GetWebSpringContextMethod = null;
+	
+	private static Method GetEnvironmentMethod = null;
+	
+	private static Method GetPropertyMethod = null;
+	
+	static {
+		try {
+			GetWebSpringContextMethod = Class.forName("org.springframework.web.context.ContextLoader").getMethod("getCurrentWebApplicationContext");
+			GetEnvironmentMethod = Class.forName("org.springframework.core.env.EnvironmentCapable").getMethod("getEnvironment");
+			GetPropertyMethod = Class.forName("org.springframework.core.env.PropertyResolver").getMethod("getProperty", String.class);
+		} catch (Throwable e) {
+			GetWebSpringContextMethod = null;
+			GetEnvironmentMethod = null;
+			GetPropertyMethod = null;
+			if (Log.isDebugEnabled()) {
+				Log.debug("Not run on web application!");
+			}
+		}
+	}
+	
+	private static String doGetApiHelperCustomUserAgent() {
+		if (GetWebSpringContextMethod == null ||
+				GetEnvironmentMethod == null ||
+				GetPropertyMethod == null) return null;
+		
+		try {
+			Object val = GetWebSpringContextMethod.invoke(null);
+			val = GetEnvironmentMethod.invoke(val);
+			return (String)GetPropertyMethod.invoke(val, "app.client.user-agent");
+		} catch (Throwable e) {
+			if (Log.isDebugEnabled()) {
+				Log.debug("get web application context error: " + e.getMessage());
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * 不使用JWT创建Retrofit
 	 * @return {@link Retrofit}
@@ -89,7 +129,7 @@ public abstract class RetrofitUtils {
 					(RSAKey)RSAUtils.parsePrivateKeyFromPEM(jwtPrivateKey),
 					jwtTokenLiveSeconds);
 		} else {
-			Log.warn("未设置请求的JWT令牌参数！");
+			Log.warn(MessageFormat.format("未设置对{0}的JWT令牌参数！", apiprefix)); 
 		}
 		
 		String admin_url = apiprefix;
@@ -98,8 +138,10 @@ public abstract class RetrofitUtils {
 		
 		OkHttpClient.Builder client_builder = new OkHttpClient.Builder();
 		if (jwt_context != null)
-			client_builder.addInterceptor(new OkHttpClientJwtInterceptor(jwt_context));
-		
+			client_builder.addInterceptor(new OkHttpClientJwtInterceptor(doGetApiHelperCustomUserAgent(), jwt_context));
+		else
+			client_builder.addInterceptor(new OkHttpClientInterceptor(doGetApiHelperCustomUserAgent()));
+
 		client_builder.connectTimeout(timeout, time_unit);
 		client_builder.readTimeout(timeout, time_unit);
 		client_builder.writeTimeout(timeout, time_unit);

@@ -12,7 +12,8 @@ public class OkHttpClientJwtInterceptor extends OkHttpClientInterceptor implemen
 	
 	private JwtContext jwtContext;
 	
-	public OkHttpClientJwtInterceptor(JwtContext jwtContext) {
+	public OkHttpClientJwtInterceptor(String user_agent, JwtContext jwtContext) {
+		super(user_agent);
 		this.jwtContext = jwtContext;
 	}
 	
