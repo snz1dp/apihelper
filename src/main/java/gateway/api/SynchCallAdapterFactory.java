@@ -93,9 +93,9 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 					if (resp.code() == 404 || ersp != null && ersp.code == 404) {
 						throw new NotFoundException(ersp == null ? resp.message() : ersp.message);
 					}
-					StringWriter sbw = new StringWriter();
-					IOUtils.copy(resp.errorBody().byteStream(), sbw, JsonUtils.JsonCharset);
 					if (ersp == null) {
+						StringWriter sbw = new StringWriter();
+						IOUtils.copy(resp.errorBody().byteStream(), sbw, JsonUtils.JsonCharset);
 						try {
 							ersp = JsonUtils.fromJson(sbw.toString(), EnvelopeReturn.class);
 						} catch (Throwable e) {
