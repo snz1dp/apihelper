@@ -44,6 +44,14 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 			}
 		}
 		
+		boolean is_null_able = false;
+		for (Annotation ann : annotations) {
+			if (ann != null && ann instanceof Nullable) {
+				is_null_able = true;
+				break;
+			}
+		}
+		
 		boolean is_page_resp = false; 
 		for (Annotation ann : annotations) {
 			if (ann != null && ann instanceof OnlyhPageList) {
@@ -57,10 +65,10 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 		
 		if (is_envelope_resp) {
 			if (returnType instanceof Result) throw new IllegalStateException("Return type error when use @EnvelopeResponse!");
-			return new EnvelopeCallAdapter(returnType, is_page_resp);
+			return new EnvelopeCallAdapter(returnType, is_page_resp, is_null_able);
 		}
 		
-		return new ObjectCallAdapter(returnType, is_page_resp); 
+		return new ObjectCallAdapter(returnType, is_page_resp, is_null_able); 
 	}
 	
 	private static class EnvelopeCallAdapter implements CallAdapter<Object, Object> {
@@ -69,9 +77,12 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 		
 		private boolean is_page_resp = false;
 		
-		public EnvelopeCallAdapter(Type responseType, boolean is_page_resp) {
+		private boolean is_null_able = false;
+		
+		public EnvelopeCallAdapter(Type responseType, boolean is_page_resp, boolean is_null_able) {
 			this.responseType = responseType;
 			this.is_page_resp = is_page_resp; 
+			this.is_null_able = is_null_able;
 			if (this.is_page_resp && responseType instanceof ParameterizedType) {
 				this.responseType = TypeUtils.parameterize(Page.class, 
 						TypeUtils.getTypeArguments((ParameterizedType) responseType).entrySet().iterator().next().getValue());
@@ -91,6 +102,7 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 				EnvelopeReturn ersp = (EnvelopeReturn)resp.body();
 				if (!(resp.code() >= 200 && resp.code() < 400) || ersp == null || ersp.code != 0) {
 					if (resp.code() == 404 || ersp != null && ersp.code == 404) {
+						if (is_null_able || responseType == Void.class) return null;
 						throw new NotFoundException(ersp == null ? resp.message() : ersp.message);
 					}
 					if (ersp == null) {
@@ -160,9 +172,12 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 		
 		private boolean is_page_list = false;
 		
-		public ObjectCallAdapter(Type responseType, boolean is_page_list) {
+		private boolean is_null_able = false;
+		
+		public ObjectCallAdapter(Type responseType, boolean is_page_list, boolean is_null_able) {
 			this.responseType = responseType;
 			this.is_page_list = is_page_list;
+			this.is_null_able = is_null_able;
 		}
 		
 		@Override
@@ -179,12 +194,14 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 					return resp.body(); 
 				} else if (responseType == Void.class) {
 					if (!(resp.code() >= 200 && resp.code() < 400)) {
-						if (resp.code() == 404) throw new NotFoundException(resp.message());
 						throw new NotExceptException(resp.code(), resp.message());
 					}
 					return null;
 				} else if (!(resp.code() >= 200 && resp.code() < 400)) {
-					if (resp.code() == 404) throw new NotFoundException(resp.message());
+					if (resp.code() == 404) {
+						if (is_null_able) return null;
+						throw new NotFoundException(resp.message());
+					}
 					throw new NotExceptException(resp.code(), resp.message());
 				}
 				Object val = resp.body();

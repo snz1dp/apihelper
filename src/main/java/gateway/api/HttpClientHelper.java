@@ -894,7 +894,7 @@ public abstract class HttpClientHelper {
 				if (!(state.getStatusCode() >= 200 && state.getStatusCode() < 400) || 
 						json_node == null || json_node.get("code") == null || json_node.get("code").getAsInt() != 0) {
 					if (state.getStatusCode() == 404 || json_node != null && json_node.get("code") != null && json_node.get("code").getAsInt() == 404) {
-						throw new NotFoundException(json_node.get("message") != null ? json_node.get("message").getAsString() : json_error);
+						return null;
 					} else 
 						throw new NotExceptException(
 							json_node == null || json_node.get("code") == null ? state.getStatusCode() : json_node.get("code").getAsInt(), 
