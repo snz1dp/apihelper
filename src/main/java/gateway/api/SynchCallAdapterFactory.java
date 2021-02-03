@@ -101,10 +101,6 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 				Response<Object> resp = call.execute();
 				EnvelopeReturn ersp = (EnvelopeReturn)resp.body();
 				if (!(resp.code() >= 200 && resp.code() < 400) || ersp == null || ersp.code != 0) {
-					if (resp.code() == 404 || ersp != null && ersp.code == 404) {
-						if (is_null_able || responseType == Void.class) return null;
-						throw new NotFoundException(ersp == null ? resp.message() : ersp.message);
-					}
 					if (ersp == null) {
 						StringWriter sbw = new StringWriter();
 						IOUtils.copy(resp.errorBody().byteStream(), sbw, JsonUtils.JsonCharset);
@@ -117,6 +113,10 @@ public class SynchCallAdapterFactory extends CallAdapter.Factory {
 							ersp.timestamp = new Date();
 							ersp.exception = e.getClass().getName();
 						}
+					}
+					if (resp.code() == 404 || ersp != null && ersp.code == 404) {
+						if (is_null_able || responseType == Void.class) return null;
+						throw new NotFoundException(ersp == null ? resp.message() : ersp.message);
 					}
 					throw new NotExceptException(
 							ersp == null ? resp.code() : ersp.code, 
