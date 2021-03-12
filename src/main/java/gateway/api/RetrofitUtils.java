@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.Gson;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 
@@ -67,8 +68,11 @@ public abstract class RetrofitUtils {
 		return createRetrofit(apiprefix, null, null);
 	}
 
-	public static Retrofit.Builder createRetrofitBuilder(String apiprefix) {
-		return createRetrofitBuilder(apiprefix, null, null);
+	public static Retrofit.Builder createRetrofitBuilder(
+		String apiprefix,
+		Interceptor...interceptors
+	) {
+		return createRetrofitBuilder(apiprefix, null, null, interceptors);
 	}
 	
 	/**
@@ -84,19 +88,21 @@ public abstract class RetrofitUtils {
 	public static Retrofit createRetrofit(
 			String apiprefix,
 			String jwtAppToken,
-			String jwtPrivateKey
+			String jwtPrivateKey,
+			Interceptor...interceptors
 	) {
-		return createRetrofit(apiprefix, jwtAppToken, jwtPrivateKey, 1800);
+		return createRetrofit(apiprefix, jwtAppToken, jwtPrivateKey, 1800, interceptors);
 	}
 
 	public static Retrofit.Builder createRetrofitBuilder(
 			String apiprefix,
 			String jwtAppToken,
-			String jwtPrivateKey
+			String jwtPrivateKey,
+			Interceptor...interceptors
 	) {
-		return createRetrofitBuilder(apiprefix, jwtAppToken, jwtPrivateKey, 1800);
+		return createRetrofitBuilder(apiprefix, jwtAppToken, jwtPrivateKey, 1800, interceptors);
 	}
-	
+
 	/**
 	 * 创建Retrofit对象并返回
 	 * @param apiprefix 第三方接口的URL前缀
@@ -106,21 +112,31 @@ public abstract class RetrofitUtils {
 	 * @return {@link Retrofit}
 	 */
 	public static Retrofit createRetrofit(
-			String apiprefix,
-			String jwtAppToken,
-			String jwtPrivateKey,
-			int jwtTokenLiveSeconds) {
-		return createRetrofit(apiprefix, jwtAppToken, jwtPrivateKey, jwtTokenLiveSeconds, 
-				JsonUtils.newGson(), JsonUtils.JsonDateFormat, 180, TimeUnit.SECONDS);
+		String apiprefix,
+		String jwtAppToken,
+		String jwtPrivateKey,
+		int jwtTokenLiveSeconds,
+		Interceptor...interceptors
+	) {
+		return createRetrofit(
+			apiprefix, jwtAppToken, jwtPrivateKey, jwtTokenLiveSeconds, 
+			JsonUtils.newGson(), JsonUtils.JsonDateFormat, 180,
+			TimeUnit.SECONDS, interceptors
+		);
 	}
 
 	public static Retrofit.Builder createRetrofitBuilder(
 			String apiprefix,
 			String jwtAppToken,
 			String jwtPrivateKey,
-			int jwtTokenLiveSeconds) {
-		return createRetrofitBuilder(apiprefix, jwtAppToken, jwtPrivateKey, jwtTokenLiveSeconds, 
-				JsonUtils.newGson(), JsonUtils.JsonDateFormat, 180, TimeUnit.SECONDS);
+			int jwtTokenLiveSeconds,
+			Interceptor...interceptors
+	) {
+		return createRetrofitBuilder(
+			apiprefix, jwtAppToken, jwtPrivateKey, jwtTokenLiveSeconds, 
+			JsonUtils.newGson(), JsonUtils.JsonDateFormat, 180, 
+			TimeUnit.SECONDS, interceptors
+		);
 	}
 
 	/**
@@ -143,11 +159,13 @@ public abstract class RetrofitUtils {
 			Gson gson,
 			String json_date_format,
 			long timeout, 
-			TimeUnit time_unit) {
+			TimeUnit time_unit,
+			Interceptor...interceptors
+	) {
 		return createRetrofitBuilder(
 			apiprefix, jwtAppToken, jwtPrivateKey,
 			jwtTokenLiveSeconds, gson, json_date_format,
-			timeout, time_unit
+			timeout, time_unit, interceptors
 		).build();
 	}
 		
@@ -171,7 +189,9 @@ public abstract class RetrofitUtils {
 			Gson gson,
 			String json_date_format,
 			long timeout, 
-			TimeUnit time_unit) {
+			TimeUnit time_unit,
+			Interceptor...interceptors
+	) {
 		JwtContext jwt_context = null;
 		if (StringUtils.isNoneBlank(jwtAppToken) &&
 				StringUtils.isNoneBlank(jwtPrivateKey)) {
@@ -191,6 +211,12 @@ public abstract class RetrofitUtils {
 			client_builder.addInterceptor(new OkHttpClientJwtInterceptor(doGetApiHelperCustomUserAgent(), jwt_context));
 		else
 			client_builder.addInterceptor(new OkHttpClientInterceptor(doGetApiHelperCustomUserAgent()));
+
+		if (interceptors != null && interceptors.length > 0) {
+			for (Interceptor interceptor : interceptors) {
+				client_builder.addInterceptor(interceptor);
+			}
+		}
 
 		client_builder.connectTimeout(timeout, time_unit);
 		client_builder.readTimeout(timeout, time_unit);
