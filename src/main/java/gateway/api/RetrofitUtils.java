@@ -66,6 +66,10 @@ public abstract class RetrofitUtils {
 	public static Retrofit createRetrofit(String apiprefix) {
 		return createRetrofit(apiprefix, null, null);
 	}
+
+	public static Retrofit.Builder createRetrofitBuilder(String apiprefix) {
+		return createRetrofitBuilder(apiprefix, null, null);
+	}
 	
 	/**
 	 * 创建Retrofit对象并返回（JWT令牌默认存活1800秒）
@@ -80,8 +84,17 @@ public abstract class RetrofitUtils {
 	public static Retrofit createRetrofit(
 			String apiprefix,
 			String jwtAppToken,
-			String jwtPrivateKey) {
+			String jwtPrivateKey
+	) {
 		return createRetrofit(apiprefix, jwtAppToken, jwtPrivateKey, 1800);
+	}
+
+	public static Retrofit.Builder createRetrofitBuilder(
+			String apiprefix,
+			String jwtAppToken,
+			String jwtPrivateKey
+	) {
+		return createRetrofitBuilder(apiprefix, jwtAppToken, jwtPrivateKey, 1800);
 	}
 	
 	/**
@@ -100,7 +113,16 @@ public abstract class RetrofitUtils {
 		return createRetrofit(apiprefix, jwtAppToken, jwtPrivateKey, jwtTokenLiveSeconds, 
 				JsonUtils.newGson(), JsonUtils.JsonDateFormat, 180, TimeUnit.SECONDS);
 	}
-	
+
+	public static Retrofit.Builder createRetrofitBuilder(
+			String apiprefix,
+			String jwtAppToken,
+			String jwtPrivateKey,
+			int jwtTokenLiveSeconds) {
+		return createRetrofitBuilder(apiprefix, jwtAppToken, jwtPrivateKey, jwtTokenLiveSeconds, 
+				JsonUtils.newGson(), JsonUtils.JsonDateFormat, 180, TimeUnit.SECONDS);
+	}
+
 	/**
 	 * 创建Retrofit对象并返回
 	 * @param apiprefix
@@ -114,6 +136,34 @@ public abstract class RetrofitUtils {
 	 * @return
 	 */
 	public static Retrofit createRetrofit(
+			String apiprefix,
+			String jwtAppToken,
+			String jwtPrivateKey,
+			int jwtTokenLiveSeconds,
+			Gson gson,
+			String json_date_format,
+			long timeout, 
+			TimeUnit time_unit) {
+		return createRetrofitBuilder(
+			apiprefix, jwtAppToken, jwtPrivateKey,
+			jwtTokenLiveSeconds, gson, json_date_format,
+			timeout, time_unit
+		).build();
+	}
+		
+	/**
+	 * 创建Retrofit对象并返回
+	 * @param apiprefix
+	 * @param jwtAppToken
+	 * @param jwtPrivateKey
+	 * @param jwtTokenLiveSeconds
+	 * @param gson
+	 * @param json_date_format
+	 * @param timeout
+	 * @param time_unit
+	 * @return
+	 */
+	public static Retrofit.Builder createRetrofitBuilder(
 			String apiprefix,
 			String jwtAppToken,
 			String jwtPrivateKey,
@@ -150,8 +200,7 @@ public abstract class RetrofitUtils {
 				.addCallAdapterFactory(SynchCallAdapterFactory.create())
 				.addConverterFactory(BytesConverterFactory.create())
 				.addConverterFactory(GsonConverterFactory.create(gson, json_date_format))
-				.client(client_builder.build()).build();
+				.client(client_builder.build());
 	}
-		
 	
 }
