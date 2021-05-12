@@ -74,6 +74,12 @@ public abstract class RetrofitUtils {
 	) {
 		return createRetrofitBuilder(apiprefix, null, null, interceptors);
 	}
+
+	public static Retrofit.Builder createRetrofitBuilder(
+		String apiprefix
+	) {
+		return createRetrofitBuilder(apiprefix, new Interceptor[]{});
+	}
 	
 	/**
 	 * 创建Retrofit对象并返回（JWT令牌默认存活1800秒）
@@ -95,12 +101,29 @@ public abstract class RetrofitUtils {
 	}
 
 	public static Retrofit.Builder createRetrofitBuilder(
+		String apiprefix,
+		String jwtAppToken,
+		String jwtPrivateKey
+	) {
+		return createRetrofitBuilder(apiprefix, jwtAppToken, jwtPrivateKey, new Interceptor[]{});
+	}
+
+	public static Retrofit.Builder createRetrofitBuilder(
 			String apiprefix,
 			String jwtAppToken,
 			String jwtPrivateKey,
 			Interceptor...interceptors
 	) {
 		return createRetrofitBuilder(apiprefix, jwtAppToken, jwtPrivateKey, 1800, interceptors);
+	}
+
+	public static Retrofit createRetrofit(
+		String apiprefix,
+		String jwtAppToken,
+		String jwtPrivateKey,
+		int jwtTokenLiveSeconds
+	) {
+		return createRetrofit(apiprefix, jwtAppToken, jwtPrivateKey, jwtTokenLiveSeconds, new Interceptor[]{});
 	}
 
 	/**
