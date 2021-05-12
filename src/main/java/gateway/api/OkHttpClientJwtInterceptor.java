@@ -1,6 +1,5 @@
 package gateway.api;
 
-import okhttp3.Interceptor;
 import okhttp3.Request.Builder;
 
 /**
@@ -8,10 +7,15 @@ import okhttp3.Request.Builder;
  * @author neeker
  *
  */
-public class OkHttpClientJwtInterceptor extends OkHttpClientInterceptor implements Interceptor {
+public class OkHttpClientJwtInterceptor extends OkHttpClientInterceptor {
 	
 	private JwtContext jwtContext;
 	
+	public OkHttpClientJwtInterceptor(JwtContext jwtContext) {
+		super(null);
+		this.jwtContext = jwtContext;
+	}
+
 	public OkHttpClientJwtInterceptor(String user_agent, JwtContext jwtContext) {
 		super(user_agent);
 		this.jwtContext = jwtContext;
