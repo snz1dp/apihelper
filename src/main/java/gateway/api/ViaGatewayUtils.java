@@ -42,18 +42,13 @@ public abstract class ViaGatewayUtils {
 		
 		// 获得真实IP
 		String realIp = request.getRemoteAddr();
-		String clientIp = request.getHeader("X-Real-IP");
+		String clientIp = request.getHeader("X-Forwarded-For");
 		if (!StringUtils.isEmpty(clientIp)) {
 			realIp = clientIp;
 		} else {
-			clientIp = request.getHeader("X-Forwarded-For");
+			clientIp = request.getHeader("X-Real-IP");
 			if (!StringUtils.isEmpty(clientIp)) {
 				realIp = clientIp;
-			} else {
-				clientIp = request.getHeader("WL-Proxy-Client-IP");
-				if (!StringUtils.isEmpty(clientIp)) {
-					realIp = clientIp;
-				}
 			}
 		}
 		return StringUtils.split(realIp, ",")[0];
