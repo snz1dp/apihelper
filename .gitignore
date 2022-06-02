@@ -3,3 +3,5 @@
 /.project
 /.classpath
 .vscode
+*.log
+*.DS_Store
