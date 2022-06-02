@@ -70,7 +70,7 @@
 
 #### 2、直接引用
 
-下载[apihelper-1.4.0-SNAPSHOT-all.jar](https://snz1.cn/maven/repository/maven-snapshots/api/gateway/apihelper/1.4.0-SNAPSHOT/apihelper-1.4.0-20180820.094935-14-all.jar)文件并放到classpath中。
+下载[apihelper-1.4.0-SNAPSHOT-all.jar](https://snz1.cn/maven/repository/maven-snapshots/api/gateway/apihelper/1.4.0-SNAPSHOT/apihelper-1.4.0-20220602.163459-3-all.jar)文件并放到classpath中。
 
 ### 二、基本功能
 
