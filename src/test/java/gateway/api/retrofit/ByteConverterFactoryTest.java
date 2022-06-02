@@ -32,7 +32,6 @@ public class ByteConverterFactoryTest {
 	@Autowired
 	private TestInterface testInterface;
 	
-	
 	@Test
 	public void testByteConverterFactory() throws IOException {
 		byte [] bytes = testInterface.getProcessDefinitionImage("process:5:35008");
@@ -46,14 +45,13 @@ public class ByteConverterFactoryTest {
 		}
 		Log.info(testInterface.getProcessDefinitionImage("process:5:35008"));
 	}
-	
+
 	@Test
 	public void testResponseBody() throws IOException {
 		ResponseBody body = testInterface.getProcessDefinitionBpmnXML("process:5:35008");
 		Log.info(body.string());
 	}
-	
-	
+
 	@SpringBootApplication
 	@Configuration
 	@Configurable

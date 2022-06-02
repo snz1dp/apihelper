@@ -1,5 +1,4 @@
-基于应用网关的API调用帮助库
-================================
+# API调用帮助库
 
 ### 一、使用方法
 
@@ -71,13 +70,13 @@
 
 #### 2、直接引用
 
-下载[apihelper-1.3.4-SNAPSHOT-all.jar](https://snz1.cn/maven/repository/maven-snapshots/api/gateway/apihelper/1.3.4-SNAPSHOT/apihelper-1.3.4-20180820.094935-14-all.jar)文件并放到classpath中。
+下载[apihelper-1.4.0-SNAPSHOT-all.jar](https://snz1.cn/maven/repository/maven-snapshots/api/gateway/apihelper/1.4.0-SNAPSHOT/apihelper-1.4.0-20180820.094935-14-all.jar)文件并放到classpath中。
 
 ### 二、基本功能
 
 供第三方应用通过网关调用API时进行安全认证时使用。
 
-提供pClient复用链接实现（需要HttpClient4.5.2以上版本）。
+提供pClient复用链接实现（需要HttpClient4.5.13以上版本）。
 
 提供Retrofit2注解式RestAPI客户端实现（依赖OKHttpClient3.10版以上）。
 
@@ -210,8 +209,3 @@ proxy_impl.test();
 
 参见`gateway.api.ViaGatewayUtlis`类实现。
 
-
-
-
-
- 

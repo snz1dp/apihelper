@@ -4,19 +4,27 @@
   <groupId>api.gateway.client</groupId>
   <artifactId>examples</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
   <url>http://maven.apache.org</url>
 
   <properties>
     <jdk.version>1.6</jdk.version>
     <source.encoding>UTF-8</source.encoding>
-    <httpclient.version>4.4.1</httpclient.version>
-    <apihelper.version>1.3.0</apihelper.version>
+    <httpclient.version>4.5.13</httpclient.version>
+    <apihelper.version>1.4.0-SNAPSHOT</apihelper.version>
     <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
   </properties>
 
   <dependencies>
   
+		<!-- Junit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+
     <!-- HttpClient -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -77,4 +85,3 @@
 	</pluginRepositories>
   
 </project>
-
