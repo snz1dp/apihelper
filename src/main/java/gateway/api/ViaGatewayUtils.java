@@ -1,6 +1,5 @@
 package gateway.api;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -210,8 +209,8 @@ public abstract class ViaGatewayUtils {
 			String value = paramter.substring(paramter_equals_pos + 1);
 			if (val_url_decode) {
 				try {
-					value = URLDecoder.decode(value, "utf-8");
-				} catch (UnsupportedEncodingException e) {
+					value = URLDecoder.decode(value, JsonUtils.JsonCharset);
+				} catch (Throwable e) {
 					if (Log.isDebugEnabled()) {
 						Log.debug("URLDecoder.decode error: " + e.getMessage(), e);
 					}
@@ -506,9 +505,37 @@ public abstract class ViaGatewayUtils {
 		if (StringUtils.isBlank(username)) {
 			username = request.getHeader("x-credential-username");
 		}
+		if (StringUtils.isNotBlank(username) && StringUtils.contains(username, "%")) {
+			try {
+				username = URLDecoder.decode(username, JsonUtils.JsonCharset);
+			} catch(Throwable e) {
+				if (Log.isDebugEnabled()) {
+					Log.debug("URLDecoder.decode error: " + e.getMessage(), e);
+				}
+			}
+		}
 		return username;
-	}	
-	
+	}
+
+	public static String getRequestDisplayNameViaGateway(HttpServletRequest request) {
+		if (request == null) return null;
+		String display_name = request.getHeader("X-User-Displayname");
+		if (StringUtils.isNotBlank(display_name) && StringUtils.contains(display_name, "%")) {
+			try {
+				display_name = URLDecoder.decode(display_name, JsonUtils.JsonCharset);
+			} catch(Throwable e) {
+				if (Log.isDebugEnabled()) {
+					Log.debug("URLDecoder.decode error: " + e.getMessage(), e);
+				}
+			}
+		}
+		return display_name;
+	}
+
+	public static String getRequestDisplayNameViaGateway() {
+		return getRequestDisplayNameViaGateway(getHttpServletRequest());
+	}
+
 	/**
 	 * 获得ACL分组代码
 	 * @return
