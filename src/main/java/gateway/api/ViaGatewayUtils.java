@@ -519,7 +519,7 @@ public abstract class ViaGatewayUtils {
 
 	public static String getRequestDisplayNameViaGateway(HttpServletRequest request) {
 		if (request == null) return null;
-		String display_name = request.getHeader("X-User-Displayname");
+		String display_name = request.getHeader("x-user-displayname");
 		if (StringUtils.isNotBlank(display_name) && StringUtils.contains(display_name, "%")) {
 			try {
 				display_name = URLDecoder.decode(display_name, JsonUtils.JsonCharset);
