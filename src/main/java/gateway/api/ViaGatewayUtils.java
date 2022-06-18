@@ -507,7 +507,7 @@ public abstract class ViaGatewayUtils {
 		}
 		if (StringUtils.isNotBlank(username) && StringUtils.contains(username, "%")) {
 			try {
-				username = URLDecoder.decode(username, JsonUtils.JsonCharset);
+				username = URLDecoder.decode(username, "UTF-8");
 			} catch(Throwable e) {
 				if (Log.isDebugEnabled()) {
 					Log.debug("URLDecoder.decode error: " + e.getMessage(), e);
@@ -522,7 +522,7 @@ public abstract class ViaGatewayUtils {
 		String display_name = request.getHeader("x-user-displayname");
 		if (StringUtils.isNotBlank(display_name) && StringUtils.contains(display_name, "%")) {
 			try {
-				display_name = URLDecoder.decode(display_name, JsonUtils.JsonCharset);
+				display_name = URLDecoder.decode(display_name, "UTF-8");
 			} catch(Throwable e) {
 				if (Log.isDebugEnabled()) {
 					Log.debug("URLDecoder.decode error: " + e.getMessage(), e);
