@@ -215,6 +215,14 @@ public abstract class RetrofitUtils {
 			TimeUnit time_unit,
 			Interceptor...interceptors
 	) {
+
+		if (Log.isDebugEnabled()) {
+			Log.debug(String.format("apiprefix  = %s", apiprefix));
+			Log.debug(String.format("apptoken   = %s", jwtAppToken));
+			Log.debug(String.format("privatekey = %s", jwtPrivateKey));
+			Log.debug(String.format("privatekey = %s", jwtPrivateKey));
+		}
+
 		JwtContext jwt_context = null;
 		if (StringUtils.isNoneBlank(jwtAppToken) &&
 				StringUtils.isNoneBlank(jwtPrivateKey)) {
