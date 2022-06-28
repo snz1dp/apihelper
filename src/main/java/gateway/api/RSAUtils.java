@@ -28,6 +28,7 @@ import javax.crypto.NoSuchPaddingException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
@@ -155,6 +156,7 @@ public abstract class RSAUtils {
 	 * @return {@link PrivateKey}
 	 */
 	public static PrivateKey parsePrivateKeyFromPEM(String pem) {
+		pem = StringUtils.replace(pem, "\\n", "\n");
 		PemReader pem_reader = new PemReader(new StringReader(pem));
 		try {
 			KeyFactory keyfactory = null;
