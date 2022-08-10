@@ -244,7 +244,7 @@
 		<repository>
 			<id>snz1</id>
 			<name>snz1</name>
-			<url>https://snz1.cn/maven/repository/maven-public/</url>
+			<url>https://snz1.cn/nexus/repository/maven-public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -255,7 +255,7 @@
 		<repository>
 			<id>central</id>
 			<name>central</name>
-			<url>http://uk.maven.org/maven2/</url>
+			<url>http://repo1.maven.org/maven2/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -268,7 +268,7 @@
 		<pluginRepository>
 			<id>snz1</id>
 			<name>snz1</name>
-			<url>https://snz1.cn/maven/repository/maven-public/</url>
+			<url>https://snz1.cn/nexus/repository/maven-public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -277,8 +277,8 @@
 			</snapshots>
 		</pluginRepository>
 		<pluginRepository>
-			<id>mvnrepository</id>
-			<name>mvnrepository</name>
+			<id>central</id>
+			<name>central</name>
 			<url>http://repo1.maven.org/maven2/</url>
 			<releases>
 				<enabled>true</enabled>
@@ -291,11 +291,11 @@
 	<distributionManagement>
 		<repository>
 			<id>snz1-releases</id>
-			<url>https://snz1.cn/maven/repository/maven-releases/</url>
+			<url>https://snz1.cn/nexus/repository/maven-releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>snz1-snapshots</id>
-			<url>https://snz1.cn/maven/repository/maven-snapshots/</url>
+			<url>https://snz1.cn/nexus/repository/maven-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 </project>
