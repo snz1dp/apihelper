@@ -2,11 +2,14 @@ package gateway.api;
 
 import java.lang.reflect.Method;
 import java.security.interfaces.RSAKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.text.MessageFormat;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import com.google.gson.Gson;
 
 import okhttp3.Interceptor;
@@ -65,19 +68,17 @@ public abstract class RetrofitUtils {
 	 * @return {@link Retrofit}
 	 */
 	public static Retrofit createRetrofit(String apiprefix) {
-		return createRetrofit(apiprefix, null, null);
+		return createRetrofit(apiprefix, null, (Algorithm)null);
 	}
 
 	public static Retrofit.Builder createRetrofitBuilder(
 		String apiprefix,
 		Interceptor...interceptors
 	) {
-		return createRetrofitBuilder(apiprefix, null, null, interceptors);
+		return createRetrofitBuilder(apiprefix, null, (Algorithm)null, interceptors);
 	}
 
-	public static Retrofit.Builder createRetrofitBuilder(
-		String apiprefix
-	) {
+	public static Retrofit.Builder createRetrofitBuilder(String apiprefix) {
 		return createRetrofitBuilder(apiprefix, new Interceptor[]{});
 	}
 	
@@ -100,6 +101,15 @@ public abstract class RetrofitUtils {
 		return createRetrofit(apiprefix, jwtAppToken, jwtPrivateKey, 1800, interceptors);
 	}
 
+	public static Retrofit createRetrofit(
+		String apiprefix,
+		String jwtAppToken,
+		Algorithm algorithm,
+		Interceptor...interceptors
+	) {
+		return createRetrofit(apiprefix, jwtAppToken, algorithm, 1800, interceptors);
+	}
+
 	public static Retrofit.Builder createRetrofitBuilder(
 		String apiprefix,
 		String jwtAppToken,
@@ -109,12 +119,29 @@ public abstract class RetrofitUtils {
 	}
 
 	public static Retrofit.Builder createRetrofitBuilder(
+		String apiprefix,
+		String jwtAppToken,
+		Algorithm algorithm
+	) {
+		return createRetrofitBuilder(apiprefix, jwtAppToken, algorithm, new Interceptor[]{});
+	}
+
+	public static Retrofit.Builder createRetrofitBuilder(
 			String apiprefix,
 			String jwtAppToken,
 			String jwtPrivateKey,
 			Interceptor...interceptors
 	) {
-		return createRetrofitBuilder(apiprefix, jwtAppToken, jwtPrivateKey, 1800, interceptors);
+		return createRetrofitBuilder(apiprefix, jwtAppToken, jwtPrivateKey, 180, interceptors);
+	}
+
+	public static Retrofit.Builder createRetrofitBuilder(
+		String apiprefix,
+		String jwtAppToken,
+		Algorithm algorithm,
+		Interceptor...interceptors
+	) {
+		return createRetrofitBuilder(apiprefix, jwtAppToken, algorithm, 180, interceptors);
 	}
 
 	public static Retrofit createRetrofit(
@@ -124,6 +151,15 @@ public abstract class RetrofitUtils {
 		int jwtTokenLiveSeconds
 	) {
 		return createRetrofit(apiprefix, jwtAppToken, jwtPrivateKey, jwtTokenLiveSeconds, new Interceptor[]{});
+	}
+
+	public static Retrofit createRetrofit(
+		String apiprefix,
+		String jwtAppToken,
+		Algorithm algorithm,
+		int jwtTokenLiveSeconds
+	) {
+		return createRetrofit(apiprefix, jwtAppToken, algorithm, jwtTokenLiveSeconds, new Interceptor[]{});
 	}
 
 	/**
@@ -148,6 +184,20 @@ public abstract class RetrofitUtils {
 		);
 	}
 
+	public static Retrofit createRetrofit(
+		String apiprefix,
+		String jwtAppToken,
+		Algorithm algorithm,
+		int jwtTokenLiveSeconds,
+		Interceptor...interceptors
+	) {
+		return createRetrofit(
+			apiprefix, jwtAppToken, algorithm, jwtTokenLiveSeconds, 
+			JsonUtils.newGson(), JsonUtils.JsonDateFormat, 180,
+			TimeUnit.SECONDS, interceptors
+		);
+	}
+
 	public static Retrofit.Builder createRetrofitBuilder(
 			String apiprefix,
 			String jwtAppToken,
@@ -157,6 +207,20 @@ public abstract class RetrofitUtils {
 	) {
 		return createRetrofitBuilder(
 			apiprefix, jwtAppToken, jwtPrivateKey, jwtTokenLiveSeconds, 
+			JsonUtils.newGson(), JsonUtils.JsonDateFormat, 180, 
+			TimeUnit.SECONDS, interceptors
+		);
+	}
+
+	public static Retrofit.Builder createRetrofitBuilder(
+		String apiprefix,
+		String jwtAppToken,
+		Algorithm algorithm,
+		int jwtTokenLiveSeconds,
+		Interceptor...interceptors
+	) {
+		return createRetrofitBuilder(
+			apiprefix, jwtAppToken, algorithm, jwtTokenLiveSeconds, 
 			JsonUtils.newGson(), JsonUtils.JsonDateFormat, 180, 
 			TimeUnit.SECONDS, interceptors
 		);
@@ -175,15 +239,15 @@ public abstract class RetrofitUtils {
 	 * @return
 	 */
 	public static Retrofit createRetrofit(
-			String apiprefix,
-			String jwtAppToken,
-			String jwtPrivateKey,
-			int jwtTokenLiveSeconds,
-			Gson gson,
-			String json_date_format,
-			long timeout, 
-			TimeUnit time_unit,
-			Interceptor...interceptors
+		String apiprefix,
+		String jwtAppToken,
+		String jwtPrivateKey,
+		int jwtTokenLiveSeconds,
+		Gson gson,
+		String json_date_format,
+		long timeout, 
+		TimeUnit time_unit,
+		Interceptor...interceptors
 	) {
 		return createRetrofitBuilder(
 			apiprefix, jwtAppToken, jwtPrivateKey,
@@ -191,7 +255,25 @@ public abstract class RetrofitUtils {
 			timeout, time_unit, interceptors
 		).build();
 	}
-		
+
+	public static Retrofit createRetrofit(
+		String apiprefix,
+		String jwtAppToken,
+		Algorithm algorithm,
+		int jwtTokenLiveSeconds,
+		Gson gson,
+		String json_date_format,
+		long timeout, 
+		TimeUnit time_unit,
+		Interceptor...interceptors
+	) {
+		return createRetrofitBuilder(
+			apiprefix, jwtAppToken, algorithm,
+			jwtTokenLiveSeconds, gson, json_date_format,
+			timeout, time_unit, interceptors
+		).build();
+	}
+
 	/**
 	 * 创建Retrofit对象并返回
 	 * @param apiprefix
@@ -205,34 +287,59 @@ public abstract class RetrofitUtils {
 	 * @return
 	 */
 	public static Retrofit.Builder createRetrofitBuilder(
-			String apiprefix,
-			String jwtAppToken,
-			String jwtPrivateKey,
-			int jwtTokenLiveSeconds,
-			Gson gson,
-			String json_date_format,
-			long timeout, 
-			TimeUnit time_unit,
-			Interceptor...interceptors
+		String apiprefix,
+		String jwtAppToken,
+		String jwtPrivateKey,
+		int jwtTokenLiveSeconds,
+		Gson gson,
+		String json_date_format,
+		long timeout, 
+		TimeUnit time_unit,
+		Interceptor...interceptors
+	) {
+
+		Algorithm algorithm = null;
+		if (StringUtils.isNoneBlank(jwtPrivateKey)) {
+			RSAKey rsa_key = (RSAKey)RSAUtils.parsePrivateKeyFromPEM(jwtPrivateKey);
+			RSAPublicKey public_key = rsa_key instanceof RSAPublicKey ? (RSAPublicKey)rsa_key : null;
+			RSAPrivateKey private_key = rsa_key instanceof RSAPrivateKey ? (RSAPrivateKey)rsa_key : null;
+			algorithm = Algorithm.RSA256(public_key, private_key);
+		}
+		return createRetrofitBuilder(
+			apiprefix, jwtAppToken, algorithm, jwtTokenLiveSeconds,
+			gson, json_date_format, timeout, time_unit, interceptors
+		);
+	}
+
+	public static Retrofit.Builder createRetrofitBuilder(
+		String apiprefix,
+		String jwtAppToken,
+		Algorithm algorithm,
+		int jwtTokenLiveSeconds,
+		Gson gson,
+		String json_date_format,
+		long timeout, 
+		TimeUnit time_unit,
+		Interceptor...interceptors
 	) {
 
 		if (Log.isDebugEnabled()) {
 			Log.debug(String.format("apiprefix  = %s", apiprefix));
 			Log.debug(String.format("apptoken   = %s", jwtAppToken));
-			Log.debug(String.format("privatekey = %s", jwtPrivateKey));
-			Log.debug(String.format("privatekey = %s", jwtPrivateKey));
+			Log.debug(String.format("algorithm = %s", algorithm.getName()));
 		}
 
 		JwtContext jwt_context = null;
-		if (StringUtils.isNoneBlank(jwtAppToken) &&
-				StringUtils.isNoneBlank(jwtPrivateKey)) {
-			jwt_context = JwtContext.create(jwtAppToken, 
-					(RSAKey)RSAUtils.parsePrivateKeyFromPEM(jwtPrivateKey),
-					jwtTokenLiveSeconds);
+		if (StringUtils.isNoneBlank(jwtAppToken) && algorithm != null) {
+			jwt_context = JwtContext.create(
+				jwtAppToken, 
+				algorithm,
+				jwtTokenLiveSeconds
+			);
 		} else {
 			Log.warn(MessageFormat.format("未设置对{0}的JWT令牌参数！", apiprefix)); 
 		}
-		
+
 		String admin_url = apiprefix;
 		if (!StringUtils.endsWith(admin_url, "/"))
 			admin_url += "/";
@@ -259,5 +366,5 @@ public abstract class RetrofitUtils {
 				.addConverterFactory(GsonConverterFactory.create(gson, json_date_format))
 				.client(client_builder.build());
 	}
-	
+
 }
