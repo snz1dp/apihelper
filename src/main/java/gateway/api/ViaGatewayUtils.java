@@ -209,7 +209,7 @@ public abstract class ViaGatewayUtils {
 			String value = paramter.substring(paramter_equals_pos + 1);
 			if (val_url_decode) {
 				try {
-					value = URLDecoder.decode(value, JsonUtils.JsonCharset);
+					value = URLDecoder.decode(value, "UTF-8");
 				} catch (Throwable e) {
 					if (Log.isDebugEnabled()) {
 						Log.debug("URLDecoder.decode error: " + e.getMessage(), e);
