@@ -68,14 +68,14 @@ public abstract class RetrofitUtils {
 	 * @return {@link Retrofit}
 	 */
 	public static Retrofit createRetrofit(String apiprefix) {
-		return createRetrofit(apiprefix, null, (Algorithm)null);
+		return buildRetrofit(apiprefix, null, (Algorithm)null);
 	}
 
 	public static Retrofit.Builder createRetrofitBuilder(
 		String apiprefix,
 		Interceptor...interceptors
 	) {
-		return createRetrofitBuilder(apiprefix, null, (Algorithm)null, interceptors);
+		return buildRetrofitBuilder(apiprefix, null, (Algorithm)null, interceptors);
 	}
 
 	public static Retrofit.Builder createRetrofitBuilder(String apiprefix) {
@@ -101,13 +101,13 @@ public abstract class RetrofitUtils {
 		return createRetrofit(apiprefix, jwtAppToken, jwtPrivateKey, 1800, interceptors);
 	}
 
-	public static Retrofit createRetrofit(
+	public static Retrofit buildRetrofit(
 		String apiprefix,
 		String jwtAppToken,
 		Algorithm algorithm,
 		Interceptor...interceptors
 	) {
-		return createRetrofit(apiprefix, jwtAppToken, algorithm, 1800, interceptors);
+		return buildRetrofit(apiprefix, jwtAppToken, algorithm, 1800, interceptors);
 	}
 
 	public static Retrofit.Builder createRetrofitBuilder(
@@ -118,12 +118,12 @@ public abstract class RetrofitUtils {
 		return createRetrofitBuilder(apiprefix, jwtAppToken, jwtPrivateKey, new Interceptor[]{});
 	}
 
-	public static Retrofit.Builder createRetrofitBuilder(
+	public static Retrofit.Builder buildRetrofitBuilder(
 		String apiprefix,
 		String jwtAppToken,
 		Algorithm algorithm
 	) {
-		return createRetrofitBuilder(apiprefix, jwtAppToken, algorithm, new Interceptor[]{});
+		return buildRetrofitBuilder(apiprefix, jwtAppToken, algorithm, new Interceptor[]{});
 	}
 
 	public static Retrofit.Builder createRetrofitBuilder(
@@ -135,13 +135,13 @@ public abstract class RetrofitUtils {
 		return createRetrofitBuilder(apiprefix, jwtAppToken, jwtPrivateKey, 180, interceptors);
 	}
 
-	public static Retrofit.Builder createRetrofitBuilder(
+	public static Retrofit.Builder buildRetrofitBuilder(
 		String apiprefix,
 		String jwtAppToken,
 		Algorithm algorithm,
 		Interceptor...interceptors
 	) {
-		return createRetrofitBuilder(apiprefix, jwtAppToken, algorithm, 180, interceptors);
+		return buildRetrofitBuilder(apiprefix, jwtAppToken, algorithm, 180, interceptors);
 	}
 
 	public static Retrofit createRetrofit(
@@ -153,13 +153,13 @@ public abstract class RetrofitUtils {
 		return createRetrofit(apiprefix, jwtAppToken, jwtPrivateKey, jwtTokenLiveSeconds, new Interceptor[]{});
 	}
 
-	public static Retrofit createRetrofit(
+	public static Retrofit buildRetrofit(
 		String apiprefix,
 		String jwtAppToken,
 		Algorithm algorithm,
 		int jwtTokenLiveSeconds
 	) {
-		return createRetrofit(apiprefix, jwtAppToken, algorithm, jwtTokenLiveSeconds, new Interceptor[]{});
+		return buildRetrofit(apiprefix, jwtAppToken, algorithm, jwtTokenLiveSeconds, new Interceptor[]{});
 	}
 
 	/**
@@ -184,14 +184,14 @@ public abstract class RetrofitUtils {
 		);
 	}
 
-	public static Retrofit createRetrofit(
+	public static Retrofit buildRetrofit(
 		String apiprefix,
 		String jwtAppToken,
 		Algorithm algorithm,
 		int jwtTokenLiveSeconds,
 		Interceptor...interceptors
 	) {
-		return createRetrofit(
+		return buildRetrofit(
 			apiprefix, jwtAppToken, algorithm, jwtTokenLiveSeconds, 
 			JsonUtils.newGson(), JsonUtils.JsonDateFormat, 180,
 			TimeUnit.SECONDS, interceptors
@@ -212,14 +212,14 @@ public abstract class RetrofitUtils {
 		);
 	}
 
-	public static Retrofit.Builder createRetrofitBuilder(
+	public static Retrofit.Builder buildRetrofitBuilder(
 		String apiprefix,
 		String jwtAppToken,
 		Algorithm algorithm,
 		int jwtTokenLiveSeconds,
 		Interceptor...interceptors
 	) {
-		return createRetrofitBuilder(
+		return buildRetrofitBuilder(
 			apiprefix, jwtAppToken, algorithm, jwtTokenLiveSeconds, 
 			JsonUtils.newGson(), JsonUtils.JsonDateFormat, 180, 
 			TimeUnit.SECONDS, interceptors
@@ -256,7 +256,7 @@ public abstract class RetrofitUtils {
 		).build();
 	}
 
-	public static Retrofit createRetrofit(
+	public static Retrofit buildRetrofit(
 		String apiprefix,
 		String jwtAppToken,
 		Algorithm algorithm,
@@ -267,7 +267,7 @@ public abstract class RetrofitUtils {
 		TimeUnit time_unit,
 		Interceptor...interceptors
 	) {
-		return createRetrofitBuilder(
+		return buildRetrofitBuilder(
 			apiprefix, jwtAppToken, algorithm,
 			jwtTokenLiveSeconds, gson, json_date_format,
 			timeout, time_unit, interceptors
@@ -305,13 +305,13 @@ public abstract class RetrofitUtils {
 			RSAPrivateKey private_key = rsa_key instanceof RSAPrivateKey ? (RSAPrivateKey)rsa_key : null;
 			algorithm = Algorithm.RSA256(public_key, private_key);
 		}
-		return createRetrofitBuilder(
+		return buildRetrofitBuilder(
 			apiprefix, jwtAppToken, algorithm, jwtTokenLiveSeconds,
 			gson, json_date_format, timeout, time_unit, interceptors
 		);
 	}
 
-	public static Retrofit.Builder createRetrofitBuilder(
+	public static Retrofit.Builder buildRetrofitBuilder(
 		String apiprefix,
 		String jwtAppToken,
 		Algorithm algorithm,
