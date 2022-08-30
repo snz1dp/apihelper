@@ -4,55 +4,21 @@
 
 #### 1、MAVEN工程配置
 
-> 在pom中加入私仓配置：
+> 在pom中加加入以下配置：
 
 ```
   <repositories>
     <repository>
-      <id>snz1</id>
-      <name>snz1</name>
-      <url>https://snz1.cn/maven/repository/maven-public/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
       <id>central</id>
       <name>central</name>
-      <url>http://uk.maven.org/maven2/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
+      <url>https://repo1.maven.org/maven2/</url>
     </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <id>snz1</id>
-      <name>snz1</name>
-      <url>https://snz1.cn/maven/repository/maven-public/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
       <id>mvnrepository</id>
       <name>mvnrepository</name>
-      <url>http://uk.maven.org/maven2/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
+      <url>https://repo1.maven.org/maven2/</url>
     </pluginRepository>
   </pluginRepositories>
 ```
@@ -61,16 +27,16 @@
 
 ```
 <dependency>
-  <groupId>api.gateway</groupId>
+  <groupId>cn.snz1</groupId>
   <artifactId>apihelper</artifactId>
-  <version>1.3.4-SNAPSHOT</version>
+  <version>1.5.0</version>
   <type>pom</type>
 </dependency>
 ```
 
 #### 2、直接引用
 
-下载[apihelper-1.4.0-SNAPSHOT-all.jar](https://snz1.cn/maven/repository/maven-snapshots/api/gateway/apihelper/1.4.0-SNAPSHOT/apihelper-1.4.0-20220602.163459-3-all.jar)文件并放到classpath中。
+下载[apihelper-1.5.0-all.jar](https://repo1.maven.org/maven2/cn/snz1/apihelper/1.5.0/apihelper-1.5.0-all.jar)文件并放到classpath中。
 
 ### 二、基本功能
 

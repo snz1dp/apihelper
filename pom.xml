@@ -1,9 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>api.gateway</groupId>
+	<groupId>cn.snz1</groupId>
 	<artifactId>apihelper</artifactId>
 	<packaging>jar</packaging>
 	<version>1.5.0</version>
+	<name>ApiHelper</name>
+	<description>Helper for call api via gateway</description>
 	<url>http://maven.apache.org</url>
 
 	<properties>
@@ -19,7 +21,7 @@
 		<jackson.version>2.13.3</jackson.version>
 		<bcprov.version>1.71</bcprov.version>
 		<httpclient.version>4.5.13</httpclient.version>
-		<spring.version>5.3.20</spring.version>
+		<spring.version>5.3.22</spring.version>
 		<commons-lang3.version>3.12.0</commons-lang3.version>
 		<retrofit.version>2.9.0</retrofit.version>
 		<gson.version>2.9.0</gson.version>
@@ -111,13 +113,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 			<version>${jackson.version}</version>
@@ -159,6 +154,19 @@
 			<groupId>com.squareup.retrofit2</groupId>
 			<artifactId>retrofit</artifactId>
 			<version>${retrofit.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.squareup.okhttp3</groupId>
+					<artifactId>okhttp</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>4.10.0</version>
 		</dependency>
 
 		<dependency>
@@ -180,6 +188,7 @@
 		</dependency>
 
 	</dependencies>
+
 	<build>
 		<finalName>apihelper</finalName>
 		<plugins>
@@ -240,54 +249,6 @@
 		</plugins>
 	</build>
 
-	<repositories>
-		<repository>
-			<id>central</id>
-			<name>central</name>
-			<url>http://repo1.maven.org/maven2/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>snz1</id>
-			<name>snz1</name>
-			<url>https://snz1.cn/nexus/repository/maven-public/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>central</id>
-			<name>central</name>
-			<url>https://repo1.maven.org/maven2/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>snz1</id>
-			<name>snz1</name>
-			<url>https://snz1.cn/nexus/repository/maven-public/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 	<distributionManagement>
 		<repository>
 			<id>snz1-releases</id>
@@ -298,4 +259,118 @@
 			<url>https://snz1.cn/nexus/repository/maven-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
+
+	<profiles>
+    <profile>
+      <id>ossrh</id>
+      <build>
+        <plugins>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.7</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>false</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.2.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.9.1</version>
+            <configuration>
+              <show>private</show>
+              <nohelp>true</nohelp>
+              <charset>UTF-8</charset>
+              <encoding>UTF-8</encoding>
+              <docencoding>UTF-8</docencoding>
+              <additionalparam>-Xdoclint:none</additionalparam>
+            </configuration>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.7</version>
+						<extensions>true</extensions>
+						<configuration>
+							 <serverId>ossrh</serverId>
+							 <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+							 <autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+        </plugins>
+      </build>
+      <distributionManagement>
+				<snapshotRepository>
+					<id>ossrh</id>
+					<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+				</snapshotRepository>
+				<repository>
+					<id>ossrh</id>
+					<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				</repository>
+			</distributionManagement>
+    </profile>
+  </profiles>
+
+	<licenses>
+    <license>
+      <name>BSD 3-Clause</name>
+      <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>https://github.com/snz1dp/apihelper.git</connection>
+    <url>https://github.com/snz1dp/apihelper.git</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <name>neeker</name>
+      <email>13317312768@qq.com</email>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>+8</timezone>
+    </developer>
+  </developers>
+
 </project>

@@ -36,3 +36,9 @@ install: build
 
 deploy: install
 	$(ROOT_DIR)/mvnw deploy -DskipTests
+
+deploy-ossrh: install
+	$(ROOT_DIR)/mvnw deploy -DskipTests -P ossrh
+
+release-ossrh:
+	$(ROOT_DIR)/mvnw nexus-staging:release -P ossrh

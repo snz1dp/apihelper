@@ -1,5 +1,6 @@
 package gateway.api;
 
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -16,8 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpMessage;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * 通过网关的工具类
@@ -244,12 +243,19 @@ public abstract class ViaGatewayUtils {
 	 * @return
 	 */
 	public static HttpServletRequest getHttpServletRequest() {
-		ServletRequestAttributes sa = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-		if (sa == null) return null;
-		return sa.getRequest();
+		try {
+			Class<?> request_context_holder_clazz = Class.forName("org.springframework.web.context.request.RequestContextHolder");
+			Class<?> sa_clazz = Class.forName("org.springframework.web.context.request.ServletRequestAttributes");
+			Method get_request_attributes_method = request_context_holder_clazz.getMethod("getRequestAttributes");
+			Method get_request_method = sa_clazz.getMethod("getRequest");
+			Object sa = get_request_attributes_method.invoke(null);
+			if (sa == null) return null;
+			return (HttpServletRequest)get_request_method.invoke(sa);
+		} catch (Throwable e) {
+			return null;
+		}
 	}
 
-	
 	/**
 	 * 判断是否来自WEB请求
 	 * @return
