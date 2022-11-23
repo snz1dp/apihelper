@@ -326,7 +326,9 @@ public abstract class RetrofitUtils {
 		if (Log.isDebugEnabled()) {
 			Log.debug(String.format("apiprefix  = %s", apiprefix));
 			Log.debug(String.format("apptoken   = %s", jwtAppToken));
-			Log.debug(String.format("algorithm = %s", algorithm.getName()));
+			if (algorithm != null) {
+				Log.debug(String.format("algorithm = %s", algorithm.getName()));
+			}
 		}
 
 		JwtContext jwt_context = null;
