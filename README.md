@@ -29,14 +29,14 @@
 <dependency>
   <groupId>cn.snz1</groupId>
   <artifactId>apihelper</artifactId>
-  <version>1.5.0</version>
+  <version>1.5.1</version>
   <type>pom</type>
 </dependency>
 ```
 
 #### 2、直接引用
 
-下载[apihelper-1.5.0-all.jar](https://repo1.maven.org/maven2/cn/snz1/apihelper/1.5.0/apihelper-1.5.0-all.jar)文件并放到classpath中。
+下载[apihelper-1.5.1-all.jar](https://repo1.maven.org/maven2/cn/snz1/apihelper/1.5.1/apihelper-1.5.1-all.jar)文件并放到classpath中。
 
 ### 二、基本功能
 
