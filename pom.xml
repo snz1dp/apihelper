@@ -3,7 +3,7 @@
 	<groupId>cn.snz1</groupId>
 	<artifactId>apihelper</artifactId>
 	<packaging>jar</packaging>
-	<version>1.5.1</version>
+	<version>1.5.2</version>
 	<name>ApiHelper</name>
 	<description>Helper for call api via gateway</description>
 	<url>http://maven.apache.org</url>
@@ -19,7 +19,7 @@
 		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
 		<java-jwt.version>3.2.0</java-jwt.version>
 		<jackson.version>2.13.3</jackson.version>
-		<bcprov.version>1.71</bcprov.version>
+		<bcprov.version>1.75</bcprov.version>
 		<httpclient.version>4.5.13</httpclient.version>
 		<spring.version>5.3.22</spring.version>
 		<commons-lang3.version>3.12.0</commons-lang3.version>
